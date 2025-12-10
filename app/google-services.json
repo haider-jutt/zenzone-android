@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "44149616979",
+    "project_id": "zen-immersive-dc5e0",
+    "storage_bucket": "zen-immersive-dc5e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44149616979:android:7d4b8708f2166a29be31a6",
+        "android_client_info": {
+          "package_name": "com.zenimmersive.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44149616979-n53m4f70d4auplgc9k2id2hi2sgosnk2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7kW9wyTTKyBzPAqwrsHAmI9MIQKzN9m0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44149616979-n53m4f70d4auplgc9k2id2hi2sgosnk2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

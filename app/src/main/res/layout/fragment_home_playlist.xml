@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_dark_blue_gradient">
+
+    <!-- AppBarLayout for Header with Parallax effect -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <!-- CollapsingToolbarLayout for Parallax -->
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/transparent"
+            android:minHeight="@dimen/_30sdp"
+            app:expandedTitleMarginEnd="16dp"
+            app:expandedTitleMarginStart="16dp"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <FrameLayout
+                android:id="@+id/viewBackgroundImageParent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_240sdp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_abstract"
+                    android:alpha="0.4"
+                    app:layout_collapseMode="parallax"
+                    app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#16FFFFFF" />
+
+            </FrameLayout>
+
+            <!-- Header controls -->
+            <FrameLayout
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_collapseMode="pin"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_56sdp">
+
+                <ImageView
+                    android:id="@+id/ivBack"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@drawable/ic_blur"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_back"/>
+
+                <ImageView
+                    android:id="@+id/ivMore"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center_vertical|end"
+                    android:visibility="invisible"
+                    android:layout_marginHorizontal="@dimen/_15sdp"
+                    android:background="@drawable/ic_blur"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_more" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/llHeaderView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_56sdp"
+                android:layout_marginBottom="@dimen/_60sdp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    tools:text="Sounds of Nature" />
+
+                <TextView
+                    android:id="@+id/tvSessions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold"
+                    tools:text="36 sessions" />
+
+                <TextView
+                    android:id="@+id/tvDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="4"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold"
+                    tools:text=" Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body. Sounds of nature have a replenishing and restorative effect on the body." />
+
+            </LinearLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_window_top_radius_medium"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <LinearLayout
+            android:id="@+id/llMainContain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="true"
+            android:orientation="vertical">
+
+            <!-- Search Bar -->
+            <LinearLayout
+                android:id="@+id/llSearchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/background_search_view"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_weight="1"
+                    android:hint="@string/what_do_you_want_to_listen"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="@color/colorOnSecondary"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/averia_libre" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/ivFilter"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_filter"
+                        app:tint="@color/white" />
+
+                    <View
+                        android:id="@+id/viewFilterDot"
+                        android:layout_width="@dimen/_5sdp"
+                        android:layout_height="@dimen/_5sdp"
+                        android:layout_gravity="end"
+                        android:background="@drawable/circle_red"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvSubAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="10"
+                tools:listitem="@layout/playlist_subalbum_item_view" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvMusicResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/_15sdp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/search_music_item" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

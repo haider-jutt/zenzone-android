@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zen Immersive</string>
+    <string name="google_web_client_id" translatable="false">44149616979-n53m4f70d4auplgc9k2id2hi2sgosnk2.apps.googleusercontent.com</string>
+    <string name="hello_blank_fragment">Bonjour fragment vide</string>
+    <string name="title_activity_dashboard">Activité Dashboard</string>
+    <string name="title_home">Accueil</string>
+    <string name="title_dashboard">Tableau de bord</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="remove_static_color_text">Supprimer la couleur fixe</string>
+    <string name="pick_static_color_text">Choisir une couleur fixe</string>
+    <string name="albums">Albums</string>
+    <string name="view_all">Voir tout</string>
+    <string name="popular">Populaire</string>
+    <string name="text_new">Nouveau</string>
+    <string name="rain_and_storm_sounds">Sons de pluie et d\'orage</string>
+    <string name="explore_meditation_types">Explorer les types de méditation</string>
+    <string name="recently_played">Récemment écoutés</string>
+    <string name="wandering_in_nature">Errer dans la nature</string>
+    <string name="at_the_beach">À la plage</string>
+    <string name="browse_all">Parcourir tout</string>
+    <string name="we_re_sorry">Nous sommes désolés</string>
+    <string name="we_can_t_find_anything">Nous ne pouvons rien trouver.</string>
+    <string name="best_for">Idéal pour</string>
+    <string name="apply_filter">Appliquer le filtre</string>
+    <string name="_0">0</string>
+    <string name="_5">5</string>
+    <string name="_10">10</string>
+    <string name="_15">15</string>
+    <string name="_20">20</string>
+    <string name="_25">25</string>
+    <string name="_30">30</string>
+    <string name="_35">35</string>
+    <string name="_40">40</string>
+    <string name="try_searching_for">Essayez de rechercher :</string>
+    <string name="search">Rechercher</string>
+    <string name="settings">Paramètres</string>
+    <string name="my_account">Mon compte</string>
+    <string name="my_orders">Mes commandes</string>
+    <string name="support">Assistance</string>
+    <string name="light_management">Gestion des lumières</string>
+    <string name="faq">FAQ</string>
+    <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="terms_conditions"><![CDATA[Conditions générales]]></string>
+    <string name="log_out">Se déconnecter</string>
+    <string name="delete_account">Supprimer le compte</string>
+    <string name="cancel">Annuler</string>
+    <string name="ok">Ok</string>
+    <string name="continue_text">Continuer</string>
+    <string name="full_name">Nom complet</string>
+    <string name="email">E-mail</string>
+    <string name="birthday">Date de naissance</string>
+    <string name="gender">Genre</string>
+    <string name="male">Homme</string>
+    <string name="female">Femme</string>
+    <string name="app_settings">Paramètres de l\'application</string>
+    <string name="language">Langue</string>
+    <string name="country">Pays</string>
+    <string name="dark_mode">Mode sombre</string>
+    <string name="save">Enregistrer</string>
+    <string name="create_new_password">Créer un nouveau mot de passe</string>
+    <string name="your_new_password_must_be_different_from_your_previously_used_password">Votre nouveau mot de passe doit être différent de celui précédemment utilisé.</string>
+    <string name="new_password">Nouveau mot de passe</string>
+    <string name="new_confirm_password">Confirmer le nouveau mot de passe</string>
+    <string name="reset_password">Réinitialiser le mot de passe</string>
+    <string name="success">Succès !</string>
+    <string name="guided">Guidé</string>
+    <string name="unguided">Non guidé</string>
+    <string name="sessions">Sessions</string>
+    <string name="please_enter_new_password_at_lease_6_character">Veuillez saisir un nouveau mot de passe d\'au moins 6 caractères</string>
+    <string name="please_enter_same_new_password_and_confirm_new_password">Veuillez saisir le même nouveau mot de passe et confirmer le nouveau mot de passe</string>
+    <string name="loading">Chargement...</string>
+    <string name="please_select_at_least_1_tag">Veuillez sélectionner au moins 1 tag.</string>
+    <string name="my_favorite_music">Mes musiques favorites</string>
+    <string name="new_keyword">Nouveau !</string>
+    <string name="please_enter_user_full_name">Veuillez saisir le nom complet de l\'utilisateur</string>
+    <string name="please_enter_valid_email">Veuillez saisir une adresse e-mail valide</string>
+    <string name="please_select_your_birthdate">Veuillez sélectionner votre date de naissance</string>
+    <string name="my_vip">Mes VIP</string>
+    <string name="what_do_you_want_to_listen">Que voulez-vous écouter ?</string>
+    <string name="free">Gratuit</string>
+    <string name="buy">Acheter</string>
+    <string name="search_tags">Rechercher des tags</string>
+    <string name="songs_result">Résultats de chansons</string>
+    <string name="play_preview">Écouter l\'aperçu</string>
+    <string name="sitali_breath">RESPIRATION SITALI</string>
+    <string name="this_a_perfect_music_for_relaxing_with_this_pack_you_will_get">Ceci est une musique parfaite pour se détendre. Avec ce pack, vous obtiendrez :</string>
+    <string name="a_complete_guide_to_use_it">- Un guide complet pour l\'utiliser</string>
+    <string name="a_guided_lyrics">- Des paroles guidées</string>
+    <string name="a_narrative_audio_guide">- Un guide audio narratif</string>
+    <string name="a_light_show_for_immunotherapy">- Un spectacle de lumière pour l\'immunothérapie</string>
+    <string name="the_music">- La musique</string>
+    <string name="euros_access_forever">. Accès à vie.</string>
+    <string name="accept_all">Tout accepter</string>
+    <string name="min">min</string>
+    <string name="get">Obtenir</string>
+    <string name="you_can_withdraw_your_consent_anytime_by_contacting_us">*Vous pouvez retirer votre consentement à tout moment en nous contactant à</string>
+    <string name="i_agree_that_may_use_my_personal_data_to_send_me_product_or_service_offerings_via_app_or_email">J\'accepte que mes données personnelles puissent être utilisées pour m\'envoyer des offres de produits ou services via l\'application ou e-mail.*</string>
+    <string name="popular_music_packs">Packs de musique populaires</string>
+    <string name="all_albums">Tous les albums</string>
+    <string name="could_not_found_song">Aucune chanson trouvée</string>
+    <string name="product_not_found">Produit introuvable</string>
+    <string name="configure_bridge">Configurer le Bridge</string>
+    <string name="no_preview_available">Aucun aperçu disponible</string>
+    <string name="order_number">Numéro de commande :</string>
+    <string name="order_date">Date de commande :</string>
+    <string name="transaction_code">Code transaction :</string>
+    <string name="list_of_my_orders">Liste de mes commandes</string>
+    <string name="amount">Montant :</string>
+    <string name="sign_up">S\'inscrire</string>
+    <string name="sign_in">Se connecter</string>
+    <string name="unlock_premium">Déverrouiller Premium</string>
+    <string name="premium">Premium</string>
+    <string name="unlimited_access_to_premium_musics">Accès illimité aux musiques Premium</string>
+    <string name="up_to_10_hue_lights">Jusqu\'à 10 lampes Hue</string>
+    <string name="streaming_in_high_def">Streaming en haute définition</string>
+    <string name="pick_your_plan">Choisissez votre formule :</string>
+    <string name="only_buy_this_music_n_1_hue_included">Achetez seulement cette musique\n1 Hue inclus</string>
+    <string name="purchase">Acheter</string>
+    <string name="restore_purchases">Restaurer les achats</string>
+    <string name="terms_of_use">Conditions d\'utilisation</string>
+    <string name="you_are_a_pro">Vous êtes pro ?</string>
+    <string name="popular_plan">Populaire</string>
+    <string name="go_back_to_premium">Retour à PREMIUM</string>
+    <string name="per_month_price">seulement %1$s/mois</string>
+    <string name="per_month">%1$s/Mois</string>
+    <string name="per_year">%1$s/An</string>
+    <string name="purchase_completed_successfully">Achat effectué avec succès !</string>
+    <string name="purchase_was_cancelled_by_you">Achat annulé par vous.</string>
+    <string name="purchase_failed">Achat échoué : %1$s</string>
+    <string name="preview_only_mode">Mode aperçu uniquement.</string>
+    <string name="with_this_pack_you_will_get">Avec ce pack, vous obtiendrez :</string>
+    <string name="a_light_show_for_luminotherapy">- Un spectacle lumineux pour luminothérapie</string>
+    <string name="the_music_in_full_access">- La musique en accès complet</string>
+    <string name="no_lyric_file">Aucune parole trouvée !</string>
+    <string name="change_lights">Changer les lumières</string>
+    <string name="configure_a_hue_bridge">Configurer un Hue Bridge</string>
+    <string name="share_log_file">Partager le fichier de logs</string>
+    <string name="sync_in_progress">Synchronisation en cours...</string>
+    <string name="continue_with_google">Continuer avec Google</string>
+    <string name="sign_in_with_email">Se connecter avec e-mail</string>
+    <string name="not_a_member_sign_up">Pas encore membre ? Création d’un compte</string>
+    <string name="your_password_has_been_changed_n_from_now_on_use_your_new_password_to_log_in">Votre mot de passe a été changé.\nÀ partir de maintenant, utilisez votre nouveau mot de passe pour vous connecter.</string>
+    <string name="page_title">Titre de la page</string>
+    <string name="forgotten_password">Mot de passe oublié</string>
+    <string name="please_enter_an_email_address_that_you_used_to_create_account_with_so_we_can_send_you_an_email_to_reset_your_password">Veuillez saisir l\'adresse e-mail que vous avez utilisée pour créer le compte afin que nous puissions vous envoyer un e-mail pour réinitialiser votre mot de passe.</string>
+    <string name="send_email">Envoyer l\'e-mail</string>
+    <string name="or_sign_in_with_email">Ou connectez-vous avec e-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="don_t_have_an_account_sign_up">Pas inscrit ? Création d’un compte</string>
+    <string name="or_sign_up_with_email">Ou inscrivez-vous avec e-mail</string>
+    <string name="name">Nom</string>
+    <string name="create_account">Créer un compte</string>
+    <string name="already_have_an_account_sign_in">Déjà inscrit ? Connectez-vous ici</string>
+    <string name="let_s_get_you_started">Commençons !</string>
+    <string name="next">Suivant</string>
+    <string name="verify_your_account">Vérifiez votre compte</string>
+    <string name="choose_a_method_of_verification">Choisissez une méthode de vérification.</string>
+    <string name="my_email_address">Mon adresse e-mail</string>
+    <string name="verify_with_your_email">Vérifier via votre e-mail</string>
+    <string name="phone_number">Numéro de téléphone</string>
+    <string name="verify_with_your_phone_number">Vérifier via votre numéro de téléphone</string>
+    <string name="we_re_going_to_send_you_a_nverification_code">Nous allons vous envoyer un \ncode de vérification.</string>
+    <string name="otp">OTP</string>
+    <string name="i_agree_to_processing_of_my_personal_health_data_for_providing_me_bellabeat_app_functions_see_more_in_privacy_policy">J\'accepte le traitement de mes données de santé personnelles pour me fournir les fonctions de l\'application Bellabeat. Voir la politique de confidentialité pour en savoir plus.</string>
+    <string name="hey_this_is_user_message_please_change_when_you_show">Hé ceci est un message utilisateur, merci de le modifier lorsque vous l\'affichez !</string>
+    <string name="dismiss">Fermer</string>
+    <string name="connect_a_bridge">Connecter un Bridge</string>
+    <string name="plug_in_your_hue_bridge_message">Branchez votre Hue Bridge sur l\'alimentation, puis utilisez le câble inclus pour le brancher à votre routeur WIFI. Votre Hue Bridge doit être connecté au même réseau WIFI que votre appareil mobile pour que l\'application Hue le détecte.</string>
+    <string name="failed">ÉCHOUÉ !</string>
+    <string name="error_your_bridge_has_not_be_found_please_retry">Erreur ! Votre bridge n\'a PAS été trouvé. Veuillez réessayer.</string>
+    <string name="success_your_bridge_has_been_found_and_installed">Succès ! Votre bridge a été trouvé et installé.</string>
+    <string name="start_pairing">COMMENCER L\'APPAIRAGE</string>
+    <string name="configure_my_lights">CONFIGURER MES LUMIÈRES</string>
+    <string name="remove_bridge">Supprimer le Bridge</string>
+    <string name="please_select_a_maximum_of_3_lights_in_this_list">Veuillez sélectionner un maximum de 3 lumières dans cette liste.</string>
+    <string name="lights">LUMIÈRES</string>
+    <string name="press_button_of_bridge_message">Veuillez cliquer sur le bouton ci-dessous et après 5 secondes, appuyez sur le bouton de votre bridge.</string>
+    <string name="licence_for_commercial_use">Licence pour usage commercial</string>
+    <string name="benefit_access_to_the_purchased_music">Avantage : Accès à la musique achetée</string>
+    <string name="limitation_1_hue_light">Limitation : 1 lampe Hue</string>
+    <string name="subscription">ABONNEMENT</string>
+    <string name="benefit_unlimited_access_to_all_music">Avantage : Accès illimité à toute la musique</string>
+    <string name="_3_hue_lights_allowed">3 lampes Hue autorisées</string>
+    <string name="subscribe">S\'ABONNER</string>
+    <string name="promo_half_price">PROMO : Moitié prix</string>
+    <string name="are_you_a_pro">Êtes-vous un Pro ?</string>
+    <string name="how_to_cancel_my_subscription">Comment annuler mon abonnement ?</string>
+    <string name="quote_of_the_day">Citation du jour</string>
+    <string name="no_data_found">Aucune donnée trouvée</string>
+    <string name="maximum_lights_can_be_on_at_a_time">Un maximum de %1$d lampes peut être allumé en même temps</string>
+    <string name="logout_message">Êtes-vous sûr de vouloir vous déconnecter ?</string>
+    <string name="delete_account_message">Êtes-vous sûr de vouloir supprimer le compte ?</string>
+    <string name="playing_now">Lecture</string>
+    <string name="please_wait">Veuillez patienter...</string>
+    <string name="loading_lyrics">Chargement des paroles...</string>
+    <string name="terms_and_conditions">Termes et conditions</string>
+    <string name="we_will_sent_code_message">Nous allons vous envoyer un \ncode de vérification.</string>
+    <string name="email_address">Adresse e-mail</string>
+    <string name="we_re_going_to_send_you_an_email_with_a_login_link">Nous allons vous envoyer un e-mail \navec un lien de connexion.</string>
+    <string name="please_enter_full_otp_code">Veuillez saisir le code OTP complet</string>
+    <string name="user_already_registered">L\'utilisateur est déjà enregistré</string>
+    <string name="lights_configuration">Configuration Lumières</string>
+    <string name="attempting_to_connect_bridge_message">Connexion au bridge en cours, veuillez patienter un moment…</string>
+
+    <array name="duration_min">
+        <item>5</item>
+        <item>30</item>
+    </array>
+
+    <array name="language_array">
+        <item>English</item>
+        <item>Français</item>
+    </array>
+
+    <!-- Error Messages - Validation -->
+    <string name="error_invalid_email">Veuillez saisir une adresse e-mail valide</string>
+    <string name="error_password_min_length">Veuillez saisir un mot de passe d\'au moins 6 caractères</string>
+    <string name="error_empty_username">Veuillez saisir un nom d\'utilisateur</string>
+    <string name="error_registration_failed">Erreur : %1$s</string>
+
+    <!-- Error Messages - Biometric -->
+    <string name="error_biometric_not_found">Votre appareil n\'a pas d\'authentification biométrique.</string>
+    <string name="error_no_fingerprint_sensor">Cet appareil n\'a pas de capteur d\'empreintes digitales</string>
+    <string name="error_biometric_unavailable">Le capteur biométrique est actuellement indisponible</string>
+
+    <!-- Success Messages - Authentication -->
+    <string name="success_authentication_succeeded">Authentification réussie</string>
+
+    <!-- Info Messages - Authentication -->
+    <string name="info_authentication_cancelled">L\'authentification a été annulée par l\'utilisateur</string>
+    <string name="info_fingerprint_available">Vous pouvez utiliser le capteur d\'empreintes digitales pour déverrouiller</string>
+
+    <!-- Error Messages - Player -->
+    <string name="error_bridge_not_active">Bridge non actif !</string>
+    <string name="info_local_player_unavailable_casting">Le lecteur local ne sera pas disponible pendant la diffusion</string>
+    <string name="error_video_player">Erreur du lecteur vidéo : %1$s</string>
+    <string name="error_remote_media">Erreur média distant : %1$s %2$s - %3$d</string>
+    <string name="error_exception">Exception : %1$s</string>
+
+    <!-- Error Messages - Purchase -->
+    <string name="error_select_plan">Veuillez sélectionner un forfait</string>
+    <string name="error_verification_failed">Échec de la vérification : %1$s</string>
+    <string name="error_accept_terms">Veuillez accepter toutes les conditions.</string>
+
+    <!-- Success Messages - Purchase -->
+    <string name="success_product_purchase_stored">Historique d\'achat du produit enregistré avec succès !</string>
+    <string name="success_subscription_stored">Historique d\'abonnement enregistré avec succès !</string>
+    <string name="success_song_purchased">Chanson achetée avec succès.</string>
+
+    <!-- Info Messages - Purchase -->
+    <string name="info_purchase_cancelled">Achat annulé</string>
+
+    <!-- Error Messages - General -->
+    <string name="error_something_went_wrong">Une erreur s\'est produite, code d\'erreur : #%1$s</string>
+    <string name="error_internet_connection">Une erreur s\'est produite, veuillez vérifier votre connexion Internet</string>
+
+    <!-- Subscription Plans -->
+    <string name="plan_premium_lights">Jusqu\'à 10 lampes Hue</string>
+    <string name="plan_infinite_lights">Jusqu\'à 30 lampes Hue</string>
+    <string name="plan_free_lights">Jusqu\'à 3 lampes Hue</string>
+    <string name="plan_infinite">INFINI</string>
+    <string name="plan_free">GRATUIT</string>
+    <string name="unlock_infinite">Déverrouiller Infini</string>
+    <string name="unlock_free">Déverrouiller Gratuit</string>
+
+    <!-- Bridge Configuration -->
+    <string name="bridge_push_button_timer">Veuillez appuyer sur le BOUTON DU BRIDGE MAINTENANT !! %1$d secondes restantes...</string>
+
+    <!-- Bridge Discovery Errors -->
+    <string name="error_bridge_discovery_failed">Erreur : %1$s</string>
+    <string name="error_no_bridge_found">Aucun Bridge trouvé !</string>
+    <string name="error_all_bridges_inactive">%1$d bridge(s) trouvé(s) mais aucun n\'est actif ou ne répond.</string>
+    <string name="error_no_bridge">Aucun Bridge !</string>
+    <string name="error_token_not_found">Token introuvable, veuillez générer un token...</string>
+
+    <!-- UI Labels -->
+    <string name="tab_music">Musique</string>
+    <string name="tab_narrator">Narrateur</string>
+    <string name="meditation_motivation">Motivation</string>
+    <string name="app_name_display">ZEN IMMERSIVE</string>
+
+    <string name="purchase_page_text"><![CDATA[
+Mode aperçu uniquement.\n
+Cette expérience complète inclut:\n
+• un guide d’utilisation\n
+• une immersion visuelle à travers les couleurs\n
+• un narrateur pour les expériences marquées « Guidé »\n
+• un accès illimité après achat
+]]></string>
+    <string name="login_cancelled">Connexion annulée!</string>
+    <string name="server_error_required_values">Erreur serveur. Veuillez ajouter toutes les valeurs requises.</string>
+</resources>

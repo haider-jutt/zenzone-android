@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_150sdp"
+    android:layout_height="@dimen/_180sdp"
+    android:layout_marginStart="@dimen/_15sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="@dimen/_10sdp">
+
+    <ImageView
+        android:id="@+id/ivMusic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_dummy_album" />
+
+    <ImageView
+        android:id="@+id/ivPlay"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_player" />
+
+    <FrameLayout
+        android:id="@+id/viewPaidContainer"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_corner_green_gradiant"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/viewPaidText"
+            android:textSize="@dimen/_12sdp"
+            android:includeFontPadding="false"
+            android:layout_margin="@dimen/_4sdp"
+            android:layout_gravity="center"
+            android:text="BUY 0.00 $"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_new"
+        android:visibility="visible"
+        android:textAllCaps="true"
+        android:layout_margin="@dimen/_10sdp"
+        app:fontFamily="@font/averia_libre"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_3sdp"
+        android:background="@drawable/background_black_alpha_rounded"
+        android:textSize="@dimen/_10ssp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/background_black_alpha"
+        android:padding="@dimen/_15sdp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="On the Beach"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold"
+            app:fontFamily="@font/averia_libre" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/llGuided"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_11sdp"
+                    android:layout_height="@dimen/_11sdp"
+                    android:src="@drawable/ic_microphone"/>
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guided"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/averia_libre" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llUnGuided"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_11sdp"
+                    android:layout_height="@dimen/_11sdp"
+                    android:src="@drawable/ic_block_microphone"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unguided"
+                    android:maxLines="1"
+                    android:maxLength="6"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_8sdp"
+                    android:textStyle="bold"
+                    app:fontFamily="@font/averia_libre" />
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/_11sdp"
+                android:layout_height="@dimen/_11sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/ic_clock"/>
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25 min"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_8sdp"
+                android:textStyle="bold"
+                app:fontFamily="@font/averia_libre" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

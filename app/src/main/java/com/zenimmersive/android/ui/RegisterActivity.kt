@@ -1,0 +1,293 @@
+package com.zenimmersive.android.ui
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
+import android.text.InputType
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.style.ClickableSpan
+import android.util.Patterns
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import androidx.core.content.ContextCompat
+import com.zenimmersive.android.R
+import com.zenimmersive.android.apiresponsemodel.UserBasicResModel
+import com.zenimmersive.android.base.BaseActivity
+import com.zenimmersive.android.base.ViewState
+import com.zenimmersive.android.databinding.ActivityRegisterBinding
+import com.zenimmersive.android.helper.CommonUtils.toJson
+import com.zenimmersive.android.helper.Constants.USER_DATA
+import com.zenimmersive.android.helper.KeyStorage
+import com.zenimmersive.android.helper.KeyStorage.Companion.KEY_USER_ID
+import com.zenimmersive.android.helper.KeyStorage.Companion.KEY_USER_TOKEN
+import com.zenimmersive.android.repository.RegisterRepository
+import com.zenimmersive.android.viewmodel.RegisterViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+
+class RegisterActivity :
+    BaseActivity<RegisterViewModel, ActivityRegisterBinding, RegisterRepository>() {
+
+    lateinit var mGoogleSignInClient: GoogleSignInClient
+    val Req_Code: Int = 123
+    private lateinit var firebaseAuth: FirebaseAuth
+    private var passwordTextVisibility: Boolean = false
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(this)
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.google_web_client_id))
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        firebaseAuth = FirebaseAuth.getInstance()
+
+        viewBinding.viewNotMemberText.setText(spannedTextPart())
+
+        initObserver()
+
+        viewBinding.etPassword.setOnTouchListener { _, event ->
+            val drawableRight = viewBinding.etPassword.compoundDrawablesRelative[2] // Index 2 represents the right drawable
+            if (event.action == MotionEvent.ACTION_UP && event.rawX >= viewBinding.etPassword.right - drawableRight.bounds.width()) {
+
+                viewBinding.etPassword.requestFocus()
+
+                // Handle the click event on the right drawable
+                // Perform your desired action here
+                if (passwordTextVisibility) {
+                    passwordTextVisibility = false
+                    viewBinding.etPassword.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        null,
+                        null,
+                        ContextCompat.getDrawable(this@RegisterActivity, R.drawable.ic_eye_block),
+                        null
+                    )
+                    viewBinding.etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                } else {
+                    passwordTextVisibility = true
+                    viewBinding.etPassword.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        null,
+                        null,
+                        ContextCompat.getDrawable(this@RegisterActivity, R.drawable.ic_eye_open),
+                        null
+                    )
+                    viewBinding.etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                }
+                true
+            } else {
+                false
+            }
+        }
+
+        viewBinding.viewGoogleLoginParent.setOnClickListener {
+            mGoogleSignInClient.signOut()
+            signInGoogle()
+        }
+
+        viewBinding.buttonRegister.setOnClickListener {
+
+            val authSuccessful: Boolean = authenticate(
+                viewBinding.etUserName.text.toString(),
+                viewBinding.etEmail.text.toString(),
+                viewBinding.etPassword.text.toString(),
+            )
+            if (authSuccessful) {
+                val regModel = UserBasicResModel(null, null, null)
+                viewModel.registerUser(viewBinding.etUserName.text.toString(), viewBinding.etEmail.text.toString(), viewBinding.etPassword.text.toString(), regModel)
+            }
+        }
+
+        viewBinding.viewNotMemberText.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun signInGoogle() {
+        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, Req_Code)
+    }
+
+    fun spannedTextPart(): SpannableString {
+        var message = getString(R.string.already_have_an_account_sign_in)
+        val spannableString =
+            SpannableString(message)
+
+        // Create a ClickableSpan for the Privacy Policy
+        val privacyPolicySpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                // Handle Privacy Policy click
+                startActivity(Intent(getContext(), LoginActivity::class.java))
+                finish()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = true // Underline the text
+            }
+        }
+
+        // Apply the spans to the respective parts of the string
+        spannableString.setSpan(
+            privacyPolicySpan,
+            message.indexOf(message.split("?").last()),
+            spannableString.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        return spannableString
+    }
+
+    fun authenticate(
+        userName: String,
+        email: String,
+        password: String,
+    ): Boolean {
+        var check = false
+        if (userName.isEmpty()) {
+            showToast(getString(R.string.error_empty_username))
+            check = false
+
+        } else if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showToast(getString(R.string.error_invalid_email))
+            check = false
+
+        } else if (password.isEmpty() || password.length < 5) {
+            showToast(getString(R.string.error_password_min_length))
+            check = false
+
+        } else {
+            check = true
+        }
+        return check
+    }
+
+    private fun handleResult(completedTask: Task<GoogleSignInAccount>) {
+        showLoader("Loading...")
+        try {
+            val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
+            if (account != null) {
+                updateUI(account)
+            }
+        } catch (e: ApiException) {
+            hideLoader()
+            showToast(e.toString())
+        }
+    }
+
+    private fun updateUI(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val regModel = UserBasicResModel(null, null, null)
+                viewModel.userSocialLogin(account.email?:"", "Google", account.idToken?:"", account.id?:"", account.displayName?:"", regModel)
+            }
+        }
+    }
+
+    fun initObserver(){
+        viewModel.registerData.observe(this){response ->
+            when(response){
+                is ViewState.DefaultState -> {}
+                is ViewState.Data -> {
+                    val registerData = response.data
+                    hideLoader()
+                    if(registerData.status == 1) {
+                        val intent = Intent(this, VerificationActivity::class.java).also {
+                            it.putExtra("isEmail", true)
+                            it.putExtra("userId", registerData.result?.userId)
+                            it.putExtra("userToken", registerData.result?.userToken)
+                            it.putExtra("email", registerData.result?.email)
+                        }
+                        startActivity(intent)
+                        finish()
+                    }
+                    else {
+                        if(registerData?.message.equals("User already registered with this email"))
+                            showToast(getString(R.string.user_already_registered))
+                        else showToast(getString(R.string.error_registration_failed, registerData.message ?: ""))
+                    }
+                }
+                is ViewState.Loading -> {
+                    showLoader("Loading...")
+                }
+
+                is ViewState.Error -> {
+                    hideLoader()
+                    showToast(response.error)
+                }
+            }
+        }
+
+        viewModel.userSocialLoginData.observe(this) { resData ->
+            when(resData){
+                is ViewState.DefaultState -> {}
+                is ViewState.Loading -> {
+                    showLoader("Loading...")
+                }
+                is ViewState.Data -> {
+                    hideLoader()
+
+                    if (resData.data.status == 1) {
+                        val userJson = resData.toJson()
+                        KeyStorage.getInstance(this@RegisterActivity)
+                            .setInt(KEY_USER_ID, resData.data.result?.userId)
+                        KeyStorage.getInstance(this@RegisterActivity)
+                            .setString(KEY_USER_TOKEN, resData.data.result?.userToken)
+                        KeyStorage.getInstance(this@RegisterActivity).setString(USER_DATA, userJson)
+                        val intent = Intent(this, DashboardActivity::class.java)
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                        finish()
+                    }else{
+                        showToast(resData.data.message ?: "")
+                    }
+                }
+                is ViewState.Error -> {
+                    hideLoader()
+                    showToast(resData.error)
+                }
+            }
+        }
+    }
+
+    override fun getActivityBinding(inflater: LayoutInflater): ActivityRegisterBinding {
+        return ActivityRegisterBinding.inflate(inflater)
+    }
+
+    override fun getRepository(): RegisterRepository {
+        return RegisterRepository(this)
+    }
+
+
+    override fun bindViewModel() {
+    }
+
+    override fun removeViewModelCallbacks() {
+    }
+
+    override fun getViewModel(): Class<RegisterViewModel> = RegisterViewModel::class.java
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Req_Code) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleResult(task)
+        }
+    }
+}

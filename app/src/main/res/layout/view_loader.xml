@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewLoader"
+    android:clickable="true"
+    android:visibility="visible"
+    tools:visibility="gone"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#151521"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_85sdp"
+            android:layout_height="@dimen/_85sdp">
+
+            <com.zenimmersive.android.helper.RoundedImageView
+                app:radius="@dimen/_30sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/zen_immersive_logo"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp" />
+
+            <ProgressBar
+                android:indeterminateTint="@color/white"
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:indeterminate="true"
+                android:layout_width="@dimen/_85sdp"
+                android:layout_height="@dimen/_85sdp" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvLoaderMessage"
+            android:layout_margin="@dimen/_15sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            tools:text="Please be patient, we are almost done...."
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sdp"
+            app:customFont="Poppins-Regular.otf" />
+    </LinearLayout>
+</FrameLayout>

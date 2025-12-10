@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1DAC92</color> <!-- Yellow -->
+    <color name="colorPrimaryVariant">#FBC02D</color> <!-- Darker Yellow -->
+    <color name="colorSecondary">#24CEF0</color> <!-- Black -->
+    <color name="colorOnPrimary">#000000</color> <!-- Text color on primary background -->
+    <color name="colorOnSecondary">#94A3B8</color> <!-- Text color on secondary background -->
+
+    <color name="black">#FF000000</color>
+    <color name="black_50">#80000000</color>
+    <color name="black_30">#4D000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_white">#1AFFFFFF</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="bark_brown">#80795327</color>
+
+    <color name="textColorPink">#c932f2</color>
+
+
+    <color name="color_button_default">#65558F</color>
+    <color name="blue">#0000FF</color>
+
+    <color name="ic_launcher_background">#891CDD</color>
+    <color name="green">#34C759</color>
+    <color name="red">#F44336</color>
+    <color name="dark_red">#40FF003D</color>
+
+    <color name="xFF9500">#FF9500</color>
+    <color name="xFFFFFF">#FAE2BF</color>
+    <color name="CDEEF6">#CDEEF6</color>
+    <color name="xABE8F6">#ABE8F6</color>
+
+    <color name="dark_blue_70">#B303314B</color>
+    <color name="gray_blue">#334155</color>
+    <color name="light_gray_blue">#64748B</color>
+    <color name="orange">#FF9800</color>
+    <color name="premium_pink">#ED9494</color>
+    <color name="sky_blue">#009FDE</color>
+    <color name="color_green_icon">#1DAC92</color>
+
+</resources>

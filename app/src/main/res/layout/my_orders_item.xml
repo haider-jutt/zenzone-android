@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:cardCornerRadius="@dimen/_10sdp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/ivImage"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                android:scaleType="fitXY"
+                tools:src="@drawable/ic_sample_meditation" />
+
+            <TextView
+                android:id="@+id/tvPurchaseAndFreeTag"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@drawable/free_paid_tag_background"
+                android:text="@string/free"
+                android:visibility="gone"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_9sdp"
+                android:textStyle="normal"
+                app:fontFamily="@font/abel" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSongName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#121826"
+                android:gravity="center"
+                android:text="@string/full_name"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                app:customFont="abel" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:text="@string/order_number"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+
+                <TextView
+                    android:id="@+id/tvOrderNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="fsdfsldfkslfks;f ks;flskf ;lskf;lfsfsff dsjkfl jslkfjsflk jsflksjfslkfjsflksjfl"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:text="@string/order_date"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+
+                <TextView
+                    android:id="@+id/tvOrderDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    tools:text="2025-04-28"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:text="@string/transaction_code"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+
+                <TextView
+                    android:id="@+id/tvTransactionCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="fsdfsldfkslfks;f ks;flskf ;lskf;lfsfsff dsjkfl jslkfjsflk jsflksjfslkfjsflksjfl"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/amountContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:text="@string/amount"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+
+                <TextView
+                    android:id="@+id/tvAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_3sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    tools:text="23"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="abel" />
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@color/gray_blue"/>
+
+
+</LinearLayout>

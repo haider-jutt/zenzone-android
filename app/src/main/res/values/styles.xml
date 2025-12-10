@@ -1,0 +1,44 @@
+<resources>
+
+    <style name="Widget.Theme.EvBlocShare.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="Widget.Theme.EvBlocShare.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+
+    <declare-styleable name="CircularProgressButton">
+        <attr name="spinning_bar_width" format="dimension" />
+        <attr name="spinning_bar_color" format="color" />
+        <attr name="spinning_bar_padding" format="dimension" />
+        <attr name="initialCornerAngle" format="dimension" />
+        <attr name="finalCornerAngle" format="dimension" />
+    </declare-styleable>
+
+    <style name="BluePrimaryButton" parent="Widget.Theme.EvBlocShare.ActionBar.Fullscreen">
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
+    <style name="CustomRangeSlider" parent="Widget.MaterialComponents.Slider">
+        <item name="thumbIcon">@drawable/ic_slide_thumb</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+
+    <!-- res/values/styles.xml -->
+    <style name="SpinnerDatePickerDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:datePickerStyle">@style/SpinnerDatePickerStyle</item>
+    </style>
+
+    <style name="SpinnerDatePickerStyle" parent="android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+    </style>
+
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ColorFragment"
+    tools:showIn="@layout/activity_player">
+
+    <!-- Banner Image - Always visible -->
+    <com.zenimmersive.android.helper.RoundedImageView
+        android:id="@+id/ivMusicPackBanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        app:radius="@dimen/_5sdp" />
+
+    <!-- ExoPlayer ViewStub - Inflated only when video is available and accessible -->
+    <ViewStub
+        android:id="@+id/stubExoPlayerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inflatedId="@+id/exoPlayerContainerInflated"
+        android:layout="@layout/include_exoplayer_container" />
+
+    <!-- Purchase Layout ViewStub - Inflated only when song is paid and not purchased -->
+    <ViewStub
+        android:id="@+id/stubPurchaseLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inflatedId="@+id/purchaseLayoutInflated"
+        android:layout="@layout/include_layout_song_purchase" />
+
+</FrameLayout>

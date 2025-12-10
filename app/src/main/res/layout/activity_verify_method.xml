@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.AuthenticationOptionActivity">
+
+    <FrameLayout
+        android:id="@+id/viewHeaderPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/_15sdp"
+            android:src="@drawable/chevron_left" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/viewHeaderPart">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/verify_your_account"
+                android:textSize="@dimen/_24sdp" />
+
+            <TextView
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textColor="@color/white"
+                android:text="@string/choose_a_method_of_verification"
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp" />
+
+            <RelativeLayout
+                android:id="@+id/viewEmailVerificationMethod"
+                android:minHeight="@dimen/_60sdp"
+                android:padding="@dimen/_10sdp"
+                android:background="@drawable/button_shape_secoundry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@drawable/email_rounded"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp" />
+
+                <LinearLayout
+                    android:layout_marginStart="@dimen/_45sdp"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textColor="@color/white"
+                        android:text="@string/my_email_address"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_11sdp"
+                        android:text="@string/verify_with_your_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <RelativeLayout
+                android:id="@+id/viewPhoneVerificationMethod"
+                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_60sdp"
+                android:background="@drawable/button_shape_primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@drawable/phone_rounded_primary"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp" />
+
+                <LinearLayout
+                    android:layout_marginStart="@dimen/_45sdp"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textColor="@color/white"
+                        android:text="@string/phone_number"
+                        android:textSize="@dimen/_13sdp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_11sdp"
+                        android:text="@string/verify_with_your_phone_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/buttonContinue"
+        android:layout_margin="@dimen/_15sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:background="@drawable/button_shape_primary"
+        android:gravity="center"
+        android:text="@string/continue_text"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_15sdp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

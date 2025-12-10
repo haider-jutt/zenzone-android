@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_110sdp"
+    android:layout_height="@dimen/_80sdp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginStart="@dimen/_15sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="@dimen/_10sdp">
+
+    <ImageView
+        android:id="@+id/ivMusic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_sample_meditation" />
+
+    <TextView
+        android:id="@+id/tvNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_new"
+        android:visibility="gone"
+        android:textAllCaps="true"
+        android:layout_margin="@dimen/_10sdp"
+        app:fontFamily="@font/averia_libre"
+        android:paddingHorizontal="@dimen/_10sdp"
+        android:paddingVertical="@dimen/_3sdp"
+        android:background="@drawable/background_black_alpha_rounded"
+        android:textSize="@dimen/_10ssp" />
+
+    <LinearLayout
+        android:id="@+id/detailContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/background_black_alpha"
+        android:paddingVertical="@dimen/_5sdp"
+        android:paddingHorizontal="@dimen/_3sdp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/tvTitle"
+            android:maxLines="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/meditation_motivation"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold"
+            app:fontFamily="@font/averia_libre" />
+
+        <TextView
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/tvSessions"
+            android:maxLines="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="54 sessions"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
+            android:textStyle="bold"
+            app:fontFamily="@font/averia_libre" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

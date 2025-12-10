@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_corners_white"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:padding="@dimen/_20sdp">
+
+    <!-- BUY BUTTON -->
+    <FrameLayout
+        android:id="@+id/purchaseLayoutBuy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner_green_gradiant"
+        android:paddingVertical="@dimen/_5sdp">
+
+        <TextView
+            android:id="@+id/purchaseLayoutBuyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/buy"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_13ssp" />
+
+        <TextView
+            android:id="@+id/purchaseLayoutPriceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_13ssp"
+            tools:text="9,99 €" />
+
+    </FrameLayout>
+
+    <!-- GUIDED + DURATION ROW -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp">
+
+        <ImageView
+            android:id="@+id/purchaseLayoutGuidedImage"
+            android:layout_width="@dimen/_11sdp"
+            android:layout_height="@dimen/_11sdp"
+            android:src="@drawable/ic_microphone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_green_icon" />
+
+        <TextView
+            android:id="@+id/purchaseLayoutGuidedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:text="@string/guided"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8ssp"
+            app:fontFamily="@font/averia_libre"
+            app:layout_constraintBottom_toBottomOf="@id/purchaseLayoutGuidedImage"
+            app:layout_constraintStart_toEndOf="@id/purchaseLayoutGuidedImage"
+            app:layout_constraintTop_toTopOf="@id/purchaseLayoutGuidedImage" />
+
+        <ImageView
+            android:id="@+id/purchaseLayoutClockImage"
+            android:layout_width="@dimen/_11sdp"
+            android:layout_height="@dimen/_11sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:src="@drawable/ic_clock_green"
+            app:layout_constraintBottom_toBottomOf="@id/purchaseLayoutGuidedImage"
+            app:layout_constraintStart_toEndOf="@id/purchaseLayoutGuidedText"
+            app:layout_constraintTop_toTopOf="@id/purchaseLayoutGuidedImage" />
+
+        <TextView
+            android:id="@+id/purchaseLayoutDurationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_3sdp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_8ssp"
+            app:fontFamily="@font/averia_libre"
+            app:layout_constraintBottom_toBottomOf="@id/purchaseLayoutClockImage"
+            app:layout_constraintStart_toEndOf="@id/purchaseLayoutClockImage"
+            app:layout_constraintTop_toTopOf="@id/purchaseLayoutClockImage"
+            tools:text="11 min" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:includeFontPadding="false"
+        android:text="@string/purchase_page_text"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12ssp"
+        app:fontFamily="@font/averia_libre" />
+
+</LinearLayout>

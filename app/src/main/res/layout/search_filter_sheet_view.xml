@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background_window_top_radius_medium"
+    android:padding="@dimen/_15sdp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivClose"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:src="@drawable/ic_close"
+        android:padding="@dimen/_3sdp"
+        android:layout_gravity="end"
+        app:tint="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/best_for"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:fontFamily="@font/abel" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:clipToPadding="false"
+        android:layout_marginTop="@dimen/_5sdp"
+        tools:itemCount="12"
+        app:spanCount="4"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/text_filter_item" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:background="@color/white"/>
+    
+    <TextView
+        android:id="@+id/tvDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duration: 5-20min"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:fontFamily="@font/abel" />
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/rsDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:labelBehavior="gone"
+        app:trackColorActive="@color/colorPrimary"
+        android:stepSize="5"
+        app:trackHeight="@dimen/_8sdp"
+        app:trackColorInactive="@color/gray_blue"
+        app:thumbRadius="@dimen/_17sdp"
+        android:valueFrom="0"
+        android:valueTo="40"
+        app:values="@array/duration_min" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_0"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_10"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_15"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_20"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_25"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_30"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_35"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/_40"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            app:fontFamily="@font/abel" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btnApply"
+        android:background="@drawable/button_shape_primary"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:text="@string/apply_filter"
+        android:textSize="@dimen/_15sdp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="@dimen/_10sdp">
+        <TextView
+            android:id="@+id/tvClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear filter"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            app:fontFamily="@font/abel" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/white"/>
+    </LinearLayout>
+
+</LinearLayout>

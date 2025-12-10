@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/viewHeaderPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/_15sdp"
+            android:src="@drawable/chevron_left" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/viewHeaderPart">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_centerInParent="true"
+                    android:background="#94A3B8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:background="#121826"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"
+                    android:text="Download Files By URL"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    app:customFont="abel" />
+            </RelativeLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/videoFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_shape_secoundry"
+                android:hint="Video File"
+                android:padding="@dimen/_5sdp"
+                android:textColorHint="#94A3B8"
+                app:customFont="Abel.ttf">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/videoFileInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:padding="@dimen/_10sdp"
+                    android:text="https://cdn.pixabay.com/video/2024/06/20/217490_large.mp4"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="Abel.ttf" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/instrumentFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_shape_secoundry"
+                android:hint="Instrument Audio File"
+                android:padding="@dimen/_5sdp"
+                android:textColorHint="#94A3B8"
+                app:customFont="Abel.ttf">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/instrumentFileInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:padding="@dimen/_10sdp"
+                    android:text="https://keshavinfotechdemo2.com/keshav/KG1/sym/MusicFiles/Soin_audio_confiance_en_soi_en_musiconly.m4a"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="Abel.ttf" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/narrativeFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_shape_secoundry"
+                android:hint="Narrative Audio File"
+                android:padding="@dimen/_5sdp"
+                android:textColorHint="#94A3B8"
+                app:customFont="Abel.ttf">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/narrativeFileInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:padding="@dimen/_10sdp"
+                    android:text="https://keshavinfotechdemo2.com/keshav/KG1/sym/MusicFiles/Soin_audio_confiance_en_soi_en_voiceonly.m4a"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp"
+                    app:customFont="Abel.ttf" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+
+            <TextView
+                android:id="@+id/buttonProcess"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@drawable/button_shape_primary"
+                android:gravity="center"
+                android:text="Process"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_5sdp" />
+
+
+            <TextView
+                android:id="@+id/buttonFMerge"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@drawable/button_shape_primary"
+                android:gravity="center"
+                android:text="Ffmpeg Process"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.media3.ui.PlayerView
+                    android:id="@+id/viewMediaUiPlayer"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_150sdp" />
+
+                <ProgressBar
+                    android:id="@+id/viewVideoProgress"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

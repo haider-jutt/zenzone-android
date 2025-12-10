@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/_15sdp"
+    android:background="#fff"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/_8sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/viewTitle"
+            android:textColor="?colorPrimary"
+            android:text="Attension"
+            app:customFont="abel"
+            android:textSize="@dimen/_12ssp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_8sdp" />
+
+        <TextView
+            android:minWidth="@dimen/_250sdp"
+            android:id="@+id/tvExtraMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            tools:text="Message"
+            android:minHeight="35dp"
+            android:padding="10dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_8sdp" />
+
+
+        <LinearLayout
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:id="@+id/negetiveButton"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/_8ssp"
+                android:layout_height="wrap_content"
+                android:text="Dismiss" />
+
+            <Space
+                android:layout_width="@dimen/_5sdp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:id="@+id/positiveButton"
+                android:textSize="@dimen/_8ssp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OK" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

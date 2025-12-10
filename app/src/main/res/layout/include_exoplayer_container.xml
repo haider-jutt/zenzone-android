@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--Video View Container-->
+    <com.zenimmersive.android.helper.RoundedFrameView
+        android:id="@+id/exoPlayerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:radius="@dimen/_5sdp">
+
+        <FrameLayout
+            android:id="@+id/exoPlayerViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            tools:visibility="visible">
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/exoPlayerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent" />
+
+            <View
+                android:id="@+id/overlayBlocker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:clickable="false"
+                android:focusable="false" />
+
+            <ImageView
+                android:id="@+id/ivTogglePlayerViewExpand"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="end"
+                android:layout_margin="@dimen/_15sdp"
+                android:src="@drawable/ic_expan_view" />
+
+            <ImageView
+                android:id="@+id/ivToggleLocalVideoLyric"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_gravity="end|center"
+                android:layout_margin="@dimen/_15sdp"
+                android:src="@drawable/ic_local_video_lyric"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/textLocalVideoLyricView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:layout_marginBottom="@dimen/_50sdp"
+                android:background="#77161B1D"
+                android:gravity="center"
+                android:textSize="@dimen/_16sdp"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/viewVideoPlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/ivVideoPlayerState"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_cont_play_huge_video" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1">
+
+            <ProgressBar
+                android:id="@+id/bufferLoaderVideoView"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_gravity="center"
+                android:indeterminateTint="#FF24CEF0"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </com.zenimmersive.android.helper.RoundedFrameView>
+
+</FrameLayout>
+

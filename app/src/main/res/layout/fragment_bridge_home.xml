@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_15sdp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp">
+
+            <View
+                android:background="@drawable/rounded_circle_yellow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/hue_image" />
+        </FrameLayout>
+
+        <com.zenimmersive.android.helper.SimpleLoadingMessageView
+            android:id="@+id/bridgeSyncMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            tools:visibility="visible"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_10sdp" />
+
+        <TextView
+            android:id="@+id/viewInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2sdp"
+            android:background="#64748B" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp" />
+
+        <FrameLayout
+            android:id="@+id/viewConfigBridge"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp">
+
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/configure_a_hue_bridge"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:rotation="180"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/chevron_left" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/viewBridgeLights"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp">
+
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/change_lights"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:rotation="180"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/chevron_left" />
+            </LinearLayout>
+        </FrameLayout>
+
+<!--        <FrameLayout-->
+<!--            android:id="@+id/viewBridgeColor"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_45sdp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:text="Change Color"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="@dimen/_12ssp" />-->
+
+<!--                <ImageView-->
+<!--                    android:rotation="180"-->
+<!--                    android:layout_width="@dimen/_20sdp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:src="@drawable/chevron_left" />-->
+<!--            </LinearLayout>-->
+<!--        </FrameLayout>-->
+
+        <FrameLayout
+            android:id="@+id/viewShareLogFile"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_45sdp">
+
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/share_log_file"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:rotation="180"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/chevron_left" />
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+</FrameLayout>

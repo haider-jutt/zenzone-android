@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.TermAcceptActivity">
+
+    <FrameLayout
+        android:id="@+id/viewHeaderPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/_15sdp"
+            android:src="@drawable/chevron_left" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/viewHeaderPart">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingEnd="@dimen/_15sdp">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="@string/let_s_get_you_started"
+                android:textSize="@dimen/_24sdp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp" />
+
+            <include
+                android:id="@+id/viewPart1"
+                layout="@layout/check_with_text_item" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+            <include
+                android:id="@+id/viewPart2"
+                layout="@layout/check_with_text_item" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+            <include
+                android:id="@+id/viewPart3"
+                layout="@layout/check_with_text_item" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_20sdp" />
+
+            <TextView
+                android:id="@+id/viewAcceptButton"
+                android:background="@drawable/button_shape_primary"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_height="@dimen/_40sdp"
+
+                android:text="@string/accept_all"
+                android:textSize="@dimen/_15sdp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/viewNextButton"
+                android:background="@drawable/button_shape_secoundry"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_height="@dimen/_40sdp"
+
+                android:text="@string/next"
+                android:textSize="@dimen/_15sdp" />
+
+            <TextView
+                android:id="@+id/tvContactUs"
+                android:layout_margin="@dimen/_20sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:autoLink="email"
+                android:text="@string/you_can_withdraw_your_consent_anytime_by_contacting_us"
+                android:textSize="@dimen/_13sdp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

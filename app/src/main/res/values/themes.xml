@@ -1,0 +1,88 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.Dreamaid" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <item name="android:windowBackground">@color/windowBackground</item>
+
+        <!-- Primary branding color. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+
+        <!-- Secondary branding color. -->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+
+        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">#151521</item>
+        <item name="android:navigationBarColor">#151521</item>
+
+
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="fontFamily">@font/abel</item>
+
+        <item name="hintTextColor">#94A3B8</item>
+        <item name="android:textColorHint">#94A3B8</item>
+        <item name="android:textColor">@color/white</item>
+
+        <item name="colorControlNormal">#94A3B8</item>
+        <item name="android:colorControlNormal">#94A3B8</item>
+        <item name="colorControlActivated">#151521</item>
+        <item name="android:colorControlActivated">#151521</item>
+        <item name="colorControlHighlight">#94A3B8</item>
+        <item name="android:colorControlHighlight">#94A3B8</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--        <item name="android:windowFullscreen">true</item>-->
+
+        <item name="switchStyle">@style/Widget.App.Switch</item>
+        <item name="android:switchStyle">@style/Widget.App.Switch</item>
+    </style>
+
+
+    <style name="Theme.Dreamaid.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Dreamaid.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Dreamaid.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar" />
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Dreamaid" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="TextAppearance.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">@dimen/_24sdp</item>
+    </style>
+
+    <style name="TextAppearance.Hint" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">@dimen/_24sdp</item>
+    </style>
+
+    <color name="windowBackground">#121826</color>
+
+    <style name="Widget.App.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="colorControlActivated">#0478F9</item>
+        <item name="colorOnSurface">#787880</item>
+        <item name="colorSecondary">#FFFFFF</item>
+        <item name="thumbTint">@color/white</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorControlActivated">#0478F9</item>
+        <item name="colorOnSurface">#787880</item>
+        <item name="colorSecondary">#FFFFFF</item>
+        <item name="thumbTint">@color/white</item>
+    </style>
+
+</resources>
