@@ -220,7 +220,8 @@ object MusicPackDownloader {
         hasMap.values.forEach { value ->
             if (value) downloadProgress++
         }
-        if (downloadProgress >= 10) {
+
+        if (downloadProgress >= 3) {
             LogSystem.e("MusicPackDownloader", "Max concurrent downloads reached: $url")
             return false
         }

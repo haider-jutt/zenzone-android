@@ -233,7 +233,15 @@ class PlayerManager private constructor(
     }
 
     private fun defaultLoadControl() =
-        DefaultLoadControl.Builder().setBackBuffer(5_000, false).build()
+        DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                15_000,  // minBufferMs - reduced from 50s default to 15s
+                30_000,  // maxBufferMs - reduced from 50s default to 30s
+                2_500,   // bufferForPlaybackMs - keep default 2.5s
+                5_000    // bufferForPlaybackAfterRebufferMs - keep default 5s
+            )
+            .setBackBuffer(5_000, false)  // Keep 5s back buffer, don't retain when paused
+            .build()
 
     private fun setupNarratorAudioPlayer(
         loadControl: DefaultLoadControl,
