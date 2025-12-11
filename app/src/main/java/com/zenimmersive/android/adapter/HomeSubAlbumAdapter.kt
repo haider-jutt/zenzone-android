@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zenimmersive.android.R
 import com.zenimmersive.android.apiresponsemodel.SubAlbum
 import com.zenimmersive.android.databinding.PlaylistSubalbumItemViewBinding
+import com.zenimmersive.android.helper.KeyStorage
 import com.zenimmersive.android.helper.LayoutMarginDecoration
 import kotlin.math.roundToInt
 
@@ -21,7 +22,18 @@ class HomeSubAlbumAdapter (val context: Context, val subAlbumList: ArrayList<Sub
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var item = subAlbumList[position]
-        holder.binding.tvSubAlbumTitle.text = item?.albumName
+
+        val selectedLanguage = KeyStorage.getInstance(context).getString(
+            KeyStorage.APP_SELECTED_LANGUAGE, "en"
+        )
+
+        val displayName = if (selectedLanguage == "fr" && !item?.albumNameFrench.isNullOrEmpty()) {
+            item?.albumNameFrench
+        } else {
+            item?.albumName
+        }
+
+        holder.binding.tvSubAlbumTitle.text = displayName
         holder.binding.tvSessions.text = "${item?.albumMusic?.size.toString()} ${context.getString(R.string.sessions)}"
 
         holder.binding.rcvMusic.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

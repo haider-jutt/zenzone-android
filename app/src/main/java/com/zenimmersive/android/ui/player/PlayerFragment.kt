@@ -565,7 +565,15 @@ class PlayerFragment : BaseFragment<PlayerViewModel, ActivityPlayerBinding, Play
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 var seekPosition = ((seekBar?.progress ?: 0) * 500L)
-                if (!isOverThePreviewSeconds(seekPosition)) playerManager?.seekTo(seekPosition)
+                if (!isOverThePreviewSeconds(seekPosition)) {
+                    playerManager?.seekTo(seekPosition)
+
+                    HueColorManager.changeColor(
+                        hueLightManager ?: HueLightManager.getInstance(requireContext()),
+                        seekPosition,
+                        viewBinding.hueColorView
+                    )
+                }
                 if (playStateBeforeSeek) playerManager?.play()
                 durationSeekEnabled = true
             }

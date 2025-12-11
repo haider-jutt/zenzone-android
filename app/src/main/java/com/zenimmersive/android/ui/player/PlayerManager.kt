@@ -510,6 +510,9 @@ class PlayerManager private constructor(
             index = playerMusicList.size - 1
         }
         _currentMediaItemIndex = index
+
+        playerMusicList[index].lastTimeMusicPosition = 0L
+
         releasePlayers()
         setupSources()
         exoPlayerMusic?.seekTo(0, 0)
@@ -529,6 +532,9 @@ class PlayerManager private constructor(
             index = 0
         }
         _currentMediaItemIndex = index
+
+        playerMusicList[index].lastTimeMusicPosition = 0L
+
         releasePlayers()
         setupSources()
         exoPlayerMusic?.seekTo(0, 0)
