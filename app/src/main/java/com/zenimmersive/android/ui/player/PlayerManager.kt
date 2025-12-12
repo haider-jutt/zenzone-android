@@ -52,6 +52,9 @@ class PlayerManager private constructor(
     var isPlaying = false
 
     private var wakeLock: PowerManager.WakeLock? = null
+    private var isCasting = false
+    private var isLoadingCastMedia = false
+    private var lastCastPosition: Long = 0L
 
     var isNarrator = false
     private var isMusicReady = false
@@ -705,7 +708,11 @@ class PlayerManager private constructor(
     }
 
     fun loadMedia(caller: String?) {
-        if (remoteMediaClient != null) loadMedia(remoteMediaClient, "${caller}>>PlayerManager#590")
+        if (remoteMediaClient != null && !isLoadingCastMedia) {
+            loadMedia(remoteMediaClient, "${caller}>>PlayerManager#590")
+        } else if (isLoadingCastMedia) {
+            LogSystem.e(TAG, "RemoteMedia Skipping loadMedia from $caller - already loading")
+        }
     }
 
     val remoteMediaClientCallback = object : RemoteMediaClient.Callback() {
@@ -714,9 +721,12 @@ class PlayerManager private constructor(
             LogSystem.e(TAG, "RemoteMedia Error : ${p0.toJson()}")
             remoteMediaClient?.stop()
             remoteMediaClient = null
+            isCasting = false
+            isLoadingCastMedia = false
             AppCastManager.castContext?.sessionManager?.endCurrentSession(true)
             playerListener?.onRemoteMediaError(mediaError = p0)
-            play()
+            // Reinitialize local players and resume playback
+            reinitializeLocalPlayersAfterCast()
         }
 
         override fun onStatusUpdated() {
@@ -724,24 +734,33 @@ class PlayerManager private constructor(
             val playerState = remoteMediaClient?.playerState
             var idleReason = remoteMediaClient?.idleReason
             LogSystem.e(TAG, "RemoteMedia State : $playerState")
+            
+            // Sync position continuously during cast
+            val currentPosition = remoteMediaClient?.approximateStreamPosition ?: 0L
+            if (currentPosition > 0) {
+                lastCastPosition = currentPosition
+                val index = fetchCurrentMediaIndex() ?: 0
+                playerMusicList.getOrNull(index)?.lastTimeMusicPosition = currentPosition
+            }
+            
             when (playerState) {
                 MediaStatus.PLAYER_STATE_LOADING, MediaStatus.PLAYER_STATE_BUFFERING -> {
-                    // The media is buffering
                     playerListener?.onPlaybackStateChanged(Player.STATE_BUFFERING)
                     pauseHueEffect()
+                    isLoadingCastMedia = false
                 }
 
                 MediaStatus.PLAYER_STATE_PAUSED -> {
                     isPlaying = false
-                    //seekToInternal(remoteMediaClient?.approximateStreamPosition?:0)
                     playerListener?.onPlaybackStateChanged(Player.STATE_READY)
+                    isLoadingCastMedia = false
                 }
 
                 MediaStatus.PLAYER_STATE_PLAYING -> {
                     isPlaying = true
-                    //seekToInternal(remoteMediaClient?.approximateStreamPosition?:0)
                     playerListener?.onPlaybackStateChanged(Player.STATE_READY)
                     startHueEffect()
+                    isLoadingCastMedia = false
                 }
 
                 MediaStatus.PLAYER_STATE_IDLE -> {
@@ -749,6 +768,7 @@ class PlayerManager private constructor(
                         playerListener?.onPlaybackStateChanged(Player.STATE_ENDED)
                     }
                     playerListener?.onPlaybackStateChanged(Player.STATE_IDLE)
+                    isLoadingCastMedia = false
                 }
 
                 else -> {}
@@ -758,11 +778,40 @@ class PlayerManager private constructor(
 
     fun loadMedia(remoteMediaClient: RemoteMediaClient?, caller: String? = null) {
         LogSystem.e(TAG, "RemoteMedia loadRemoteMedia Invoked By $caller")
-        exoPlayerMusic?.pause()
-        exoPlayerVoice?.pause()
-        exoLocalVideoPlayer?.pause()
-
+        
+        // Prevent redundant calls
+        if (isLoadingCastMedia) {
+            LogSystem.e(TAG, "RemoteMedia loadMedia already in progress, skipping call from $caller")
+            return
+        }
+        
+        isLoadingCastMedia = true
+        isCasting = true
+        
+        // Store current position before releasing players
+        val currentPosition = getPlayerPosition()
         var index = fetchCurrentMediaIndex() ?: 0
+        if (currentPosition > 0) {
+            playerMusicList.getOrNull(index)?.lastTimeMusicPosition = currentPosition
+        }
+        
+        // Properly stop and release local players to free resources
+        LogSystem.e(TAG, "RemoteMedia Releasing local players to free resources")
+        exoPlayerMusic?.stop()
+        exoPlayerMusic?.release()
+        exoPlayerMusic = null
+        
+        exoPlayerVoice?.stop()
+        exoPlayerVoice?.release()
+        exoPlayerVoice = null
+        
+        exoLocalVideoPlayer?.stop()
+        exoLocalVideoPlayer?.release()
+        exoLocalVideoPlayer = null
+        
+        // Release wake lock during cast
+        releaseWakeLock()
+
         LogSystem.e(TAG, "RemoteMedia loadRemoteMedia Index of Music Pack ${index}")
         var musicItem = playerMusicList[index]
         // That is for current application language
@@ -907,6 +956,10 @@ class PlayerManager private constructor(
     fun endCurrentSession(stopCasting: Boolean) {
         castContext?.sessionManager?.endCurrentSession(stopCasting)
         remoteMediaClient = null
+        isCasting = false
+        isLoadingCastMedia = false
+        // Reinitialize local players when cast ends
+        reinitializeLocalPlayersAfterCast()
     }
 
     fun isPlayerBuffering(): Boolean {
@@ -1251,6 +1304,48 @@ class PlayerManager private constructor(
             }
         } catch (e: Exception) {
             LogSystem.e(TAG, "Failed to release wake lock: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Reinitialize local players after casting ends
+     * Restores playback at the last cast position
+     */
+    private fun reinitializeLocalPlayersAfterCast() {
+        try {
+            LogSystem.e(TAG, "Reinitializing local players after cast ended")
+            val index = fetchCurrentMediaIndex() ?: 0
+            val musicItem = playerMusicList.getOrNull(index) ?: return
+            
+            // Use last synced position from cast
+            val resumePosition = musicItem.lastTimeMusicPosition ?: lastCastPosition
+            LogSystem.e(TAG, "Resuming local playback at position: $resumePosition")
+            
+            // Reinitialize players with stored position
+            initializePlayersIfNeed(index, object : PlayerListener {
+                override fun onPlaybackStateChanged(state: Int) {}
+                override fun onPlayerStateChanged(musicReady: Boolean, voiceReady: Boolean) {
+                    if (isPlayerReady()) {
+                        // Resume playback automatically
+                        play()
+                        LogSystem.e(TAG, "Local playback resumed after cast")
+                    }
+                }
+                override fun onSessionEnded() {}
+                override fun hideLoader() {}
+                override fun onCastSessionDisconnected() {}
+                override fun onCastSessionConnected() {}
+                override fun onPlayerError(message: String?) {}
+                override fun getHueColorView(): View? = null
+                override fun songNotPurchased(
+                    currentMusicItem: AlbumMusic?,
+                    allDirectMusicList: ArrayList<AlbumMusic>
+                ) {}
+                override fun onRemoteMediaError(mediaError: MediaError) {}
+            })
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Error reinitializing players after cast: ${e.message}")
             e.printStackTrace()
         }
     }
