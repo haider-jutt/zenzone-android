@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.view.View
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -50,6 +51,8 @@ class PlayerManager private constructor(
     var remoteMediaClient: RemoteMediaClient? = null
     var isPlaying = false
 
+    private var wakeLock: PowerManager.WakeLock? = null
+
     var isNarrator = false
     private var isMusicReady = false
     private var isVoiceReady = false
@@ -65,6 +68,8 @@ class PlayerManager private constructor(
         AppCastManager.setupCastSession(context)
         remoteMediaClient =
             AppCastManager.castContext?.sessionManager?.currentCastSession?.remoteMediaClient
+        
+        initializeWakeLock()
     }
 
 
@@ -615,12 +620,18 @@ class PlayerManager private constructor(
                 if (!isRemoteClientPlaying()) {
                     remoteMediaClient?.play()
                     isPlaying = true
+                    releaseWakeLock()
                     return true
                 }
             } else {
                 exoPlayerMusic?.play()
                 exoPlayerVoice?.play()
-                if (LocalVideoPlayerPropertyManager.isPlayButtonPressed) exoLocalVideoPlayer?.play()
+                if (LocalVideoPlayerPropertyManager.isPlayButtonPressed) {
+                    exoLocalVideoPlayer?.play()
+                    acquireWakeLock()
+                } else {
+                    releaseWakeLock()
+                }
                 isPlaying = true
                 return true
             }
@@ -647,6 +658,7 @@ class PlayerManager private constructor(
                 exoPlayerVoice?.pause()
                 exoLocalVideoPlayer?.pause()
                 isPlaying = false
+                releaseWakeLock()
                 return true
             }
         } finally {
@@ -662,6 +674,7 @@ class PlayerManager private constructor(
         exoPlayerVoice?.pause()
         exoLocalVideoPlayer?.pause()
         isPlaying = false
+        releaseWakeLock()
     }
 
     fun seekTo(position: Long) {
@@ -840,11 +853,12 @@ class PlayerManager private constructor(
         exoPlayerMusic = null
         exoPlayerVoice = null
         exoLocalVideoPlayer = null
+        
+        releaseWakeLock()
     }
 
     @Synchronized
     fun isPlayerReady(): Boolean {
-//        return isMusicReady && isVoiceReady
         return isMusicReady && isVoiceReady
     }
 
@@ -881,17 +895,10 @@ class PlayerManager private constructor(
                 remoteMediaClient?.isPlaying == true || remoteMediaClient?.isPaused == true
             if (isRemoteClientPlaying) {
                 var position = remoteMediaClient?.approximateStreamPosition ?: 0L
-//                LogSystem.e(
-//                    TAG,
-//                    "Remote Player Position: $position Duration : ${remoteMediaClient?.streamDuration}"
-//                )
+
                 return position
             }
             val position = exoPlayerMusic?.currentPosition ?: 0
-//            LogSystem.e(
-//                TAG,
-//                "Local Player Position: $position Duration : ${exoPlayerMusic?.duration}"
-//            )
             return position
         }
         return 0
@@ -927,6 +934,7 @@ class PlayerManager private constructor(
         pauseHueEffect()
         releasePlayers()
         releaseResources()
+        releaseWakeLock()
         playerManagerInstance = null
     }
 
@@ -1102,6 +1110,7 @@ class PlayerManager private constructor(
     fun playLocalPlayerSync() {
         exoLocalVideoPlayer?.seekTo(getPlayerPosition())
         exoLocalVideoPlayer?.play()
+        acquireWakeLock()
         if (!isPlaying) {
             play()
         }
@@ -1109,6 +1118,7 @@ class PlayerManager private constructor(
 
     fun pauseLocalVideoPlayer() {
         exoLocalVideoPlayer?.pause()
+        releaseWakeLock()
     }
 
     fun isVideoPlayerReady(): Boolean {
@@ -1201,5 +1211,47 @@ class PlayerManager private constructor(
             |Narrator Mode: $isNarrator
             |===============================
         """.trimMargin()
+    }
+
+    /**
+     * Initialize wake lock to keep screen on during video playback
+     */
+    private fun initializeWakeLock() {
+        try {
+            val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK,
+                "ZenZone:VideoPlaybackWakeLock"
+            )
+            wakeLock?.setReferenceCounted(false)
+            LogSystem.e(TAG, "Wake lock initialized successfully")
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Failed to initialize wake lock: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    private fun acquireWakeLock() {
+        try {
+            if (wakeLock?.isHeld == false) {
+                wakeLock?.acquire()
+                LogSystem.e(TAG, "Wake lock acquired - screen will stay on")
+            }
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Failed to acquire wake lock: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    private fun releaseWakeLock() {
+        try {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+                LogSystem.e(TAG, "Wake lock released - screen can turn off")
+            }
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Failed to release wake lock: ${e.message}")
+            e.printStackTrace()
+        }
     }
 }
