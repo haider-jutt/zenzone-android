@@ -2,11 +2,15 @@ package com.zenimmersive.android.ui.player
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import android.view.View
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -20,6 +24,7 @@ import com.zenimmersive.android.apiresponsemodel.AlbumMusic
 import com.zenimmersive.android.helper.CustomLyricView.LyricLine
 
 import com.zenimmersive.android.helper.MusicPackDownloader
+import com.zenimmersive.android.helper.toSeconds
 import com.zenimmersive.android.helper.KeyStorage
 import com.zenimmersive.android.helper.KeyStorage.Companion.APP_SELECTED_LANGUAGE
 import com.zenimmersive.android.helper.LogSystem
@@ -72,7 +77,89 @@ class PlayerManager private constructor(
         remoteMediaClient =
             AppCastManager.castContext?.sessionManager?.currentCastSession?.remoteMediaClient
         
+        
         initializeWakeLock()
+    }
+
+    // Preview Timer for unpurchased music
+    private var previewTimer: Handler = Handler(Looper.getMainLooper())
+    private var previewRunnable: Runnable? = null
+    private val PREVIEW_DURATION_MS = 60_000L // 1 minute
+    private var isPreviewTimerActive = false
+
+    private fun startPreviewTimer(musicItem: AlbumMusic?) {
+        // Cancel any existing timer
+        stopPreviewTimer()
+
+        if (musicItem == null) return
+
+        // Only start timer for unpurchased music that is paid
+        val isPaid = musicItem.isPaid == 1
+        val isPurchased = musicItem.isPurchased == 1
+        
+        if (isPaid && !isPurchased) {
+            LogSystem.e(TAG, "Starting preview timer for unpurchased music: ${musicItem.songName}")
+            isPreviewTimerActive = true
+
+            previewRunnable = Runnable {
+                LogSystem.e(TAG, "Preview time expired for: ${musicItem.songName}")
+                handlePreviewExpired(musicItem)
+            }
+            
+            // Calculate remaining preview time if resuming
+            // (Simply using fixed 1 minute for now as per requirements "stops after one minute")
+            // Ideally we could track accumulated time, but starting fresh 1m from play/resume 
+            // or enforcing absolute limit is a design choice. 
+            // Based on user "stops after one minute", fixed duration from start of session is safer.
+            // But since AlbumMusic has previewLength, let's respect that if available, else default to 60s
+            val duration = if (musicItem.previewLength != null) {
+                 musicItem.previewLength!!.toSeconds(60) * 1000L
+            } else {
+                 PREVIEW_DURATION_MS
+            }
+            
+            // If already played beyond preview limit (e.g. seeking), stop immediately
+            val currentPos = getPlayerPosition()
+            if (currentPos >= duration) {
+                 handlePreviewExpired(musicItem)
+            } else {
+                 // Schedule stop for remaining time
+                 val remaining = duration - currentPos
+                 if (remaining > 0) {
+                     previewTimer.postDelayed(previewRunnable!!, remaining)
+                 } else {
+                     handlePreviewExpired(musicItem)
+                 }
+            }
+        }
+    }
+
+    private fun stopPreviewTimer() {
+        if (isPreviewTimerActive) {
+            LogSystem.e(TAG, "Stopping preview timer")
+            previewRunnable?.let { previewTimer.removeCallbacks(it) }
+            previewRunnable = null
+            isPreviewTimerActive = false
+        }
+    }
+
+    private fun handlePreviewExpired(musicItem: AlbumMusic) {
+        LogSystem.e(TAG, "Preview expired, stopping playback")
+        isPreviewTimerActive = false
+
+        // Pause playback
+        pauseForce()
+        
+        // Seek to preview limit to prevent just hitting play again and continuing
+        val duration = if (musicItem.previewLength != null) {
+                musicItem.previewLength!!.toSeconds(60) * 1000L
+        } else {
+                PREVIEW_DURATION_MS
+        }
+        seekTo(duration)
+
+        // Notify listener to show purchase dialog
+        playerListener?.songNotPurchased(musicItem, playerMusicList)
     }
 
 
@@ -101,6 +188,9 @@ class PlayerManager private constructor(
                 it.lastTimeMusicPosition = 0L
             }
         }
+        
+        // Stop any existing preview timer when initializing new players
+        stopPreviewTimer()
 
         var music = directMusicList[selectMusicIndex]
         _currentMediaItemIndex = selectMusicIndex
@@ -207,7 +297,7 @@ class PlayerManager private constructor(
                             LogSystem.e(TAG, "Failed to delete local video file: ${e.message}")
                         }
                         setupLocalVideoPlayer(
-                            defaultLoadControl(),
+                            getAdaptiveLoadControl(),
                             index,
                             tempCallback
                         )
@@ -240,6 +330,66 @@ class PlayerManager private constructor(
         return getMediaSource(localVideoFileURL, musicPack)
     }
 
+    /**
+     * Build AudioAttributes for meditation content with proper audio focus handling
+     */
+    private fun buildAudioAttributes(): AudioAttributes {
+        return AudioAttributes.Builder()
+            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+            .setUsage(C.USAGE_MEDIA)
+            .build()
+    }
+
+    /**
+     * Check if device is connected to WiFi
+     */
+    private fun isWifiConnected(): Boolean {
+        return try {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Error checking WiFi connection: ${e.message}")
+            false
+        }
+    }
+
+    /**
+     * Get adaptive load control based on network type
+     * WiFi: Larger buffers for smoother playback
+     * Cellular: Smaller buffers to save data
+     */
+    private fun getAdaptiveLoadControl(): DefaultLoadControl {
+        val isWifi = isWifiConnected()
+        LogSystem.e(TAG, "Creating LoadControl for ${if (isWifi) "WiFi" else "Cellular"} connection")
+        
+        return if (isWifi) {
+            // WiFi: Larger buffers for smoother playback
+            DefaultLoadControl.Builder()
+                .setBufferDurationsMs(
+                    20_000,  // minBufferMs - 20s for WiFi
+                    40_000,  // maxBufferMs - 40s for WiFi
+                    2_500,   // bufferForPlaybackMs - keep default 2.5s
+                    5_000    // bufferForPlaybackAfterRebufferMs - keep default 5s
+                )
+                .setBackBuffer(10_000, false)  // Keep 10s back buffer on WiFi
+                .build()
+        } else {
+            // Cellular: Smaller buffers to save data
+            DefaultLoadControl.Builder()
+                .setBufferDurationsMs(
+                    10_000,  // minBufferMs - 10s for cellular
+                    20_000,  // maxBufferMs - 20s for cellular
+                    2_500,   // bufferForPlaybackMs - keep default 2.5s
+                    5_000    // bufferForPlaybackAfterRebufferMs - keep default 5s
+                )
+                .setBackBuffer(5_000, false)  // Keep 5s back buffer on cellular
+                .build()
+        }
+    }
+
+    @Deprecated("Use getAdaptiveLoadControl() instead for network-aware buffering")
     private fun defaultLoadControl() =
         DefaultLoadControl.Builder()
             .setBufferDurationsMs(
@@ -250,6 +400,7 @@ class PlayerManager private constructor(
             )
             .setBackBuffer(5_000, false)  // Keep 5s back buffer, don't retain when paused
             .build()
+
 
     private fun setupNarratorAudioPlayer(
         loadControl: DefaultLoadControl,
@@ -270,7 +421,9 @@ class PlayerManager private constructor(
 
         exoPlayerVoice = (exoPlayerVoice ?: ExoPlayer.Builder(context)
             .setRenderersFactory(DefaultRenderersFactory(context).setEnableDecoderFallback(true))
-            .setLoadControl(loadControl).build()).apply {
+            .setLoadControl(loadControl)
+            .setAudioAttributes(buildAudioAttributes(), true)  // Enable audio focus handling
+            .build()).apply {
             setMediaSource(buildSingleNarratorAudioPlayerSource(selectMusicIndex))
             seekTo(0, playerMusicList[selectMusicIndex].lastTimeMusicPosition ?: 0L)
             prepare()
@@ -350,7 +503,7 @@ class PlayerManager private constructor(
                             )
                         }
                         setupNarratorAudioPlayer(
-                            defaultLoadControl(),
+                            getAdaptiveLoadControl(),
                             index,
                             tempCallback,
                             _isNarrator
@@ -410,7 +563,9 @@ class PlayerManager private constructor(
 
         exoPlayerMusic = (exoPlayerMusic ?: ExoPlayer.Builder(context)
             .setRenderersFactory(DefaultRenderersFactory(context).setEnableDecoderFallback(true))
-            .setLoadControl(loadControl).build()).apply {
+            .setLoadControl(loadControl)
+            .setAudioAttributes(buildAudioAttributes(), true)  // Enable audio focus handling
+            .build()).apply {
             setMediaSource(buildSingleMusicAudioPlayerSource(selectMusicIndex))
             seekTo(0, playerMusicList[selectMusicIndex].lastTimeMusicPosition ?: 0L)
             prepare()
@@ -490,14 +645,14 @@ class PlayerManager private constructor(
                             )
                         }
 
-                        setupMusicAudioPlayer(defaultLoadControl(), index, tempCallback)
+                        setupMusicAudioPlayer(getAdaptiveLoadControl(), index, tempCallback)
                         setupNarratorAudioPlayer(
-                            defaultLoadControl(),
+                            getAdaptiveLoadControl(),
                             index,
                             tempCallback,
                             isNarrator
                         )
-                        setupLocalVideoPlayer(defaultLoadControl(), index, tempCallback)
+                        setupLocalVideoPlayer(getAdaptiveLoadControl(), index, tempCallback)
                         return
                     }
 
@@ -517,6 +672,8 @@ class PlayerManager private constructor(
     }
 
     fun previousMusicPlay() {
+        // Stop timer when changing tracks
+        stopPreviewTimer()
         LogSystem.e(
             TAG,
             "previousMusicPlay Invoked isNarrator : ${isNarrator} Current Index : ${_currentMediaItemIndex}"
@@ -539,6 +696,8 @@ class PlayerManager private constructor(
     }
 
     fun nextMusicPlay() {
+        // Stop timer when changing tracks
+        stopPreviewTimer()
         LogSystem.e(
             TAG,
             "nextMusicPlay Invoked isNarrator : ${isNarrator} Current Index : ${_currentMediaItemIndex}"
@@ -568,7 +727,7 @@ class PlayerManager private constructor(
 
         // Always setup players with current index for single media source approach
         if (exoPlayerMusic == null) {
-            setupMusicAudioPlayer(defaultLoadControl(), index, tempCallback)
+            setupMusicAudioPlayer(getAdaptiveLoadControl(), index, tempCallback)
         } else {
             exoPlayerMusic?.setMediaSource(buildSingleMusicAudioPlayerSource(index))
             exoPlayerMusic?.seekTo(0, playerMusicList[index].lastTimeMusicPosition ?: 0L)
@@ -576,7 +735,7 @@ class PlayerManager private constructor(
 
         if (exoPlayerVoice == null) {
             setupNarratorAudioPlayer(
-                defaultLoadControl(),
+                getAdaptiveLoadControl(),
                 index,
                 tempCallback,
                 isNarrator
@@ -587,7 +746,7 @@ class PlayerManager private constructor(
         }
 
         if (exoLocalVideoPlayer == null) {
-            setupLocalVideoPlayer(defaultLoadControl(), index, tempCallback)
+            setupLocalVideoPlayer(getAdaptiveLoadControl(), index, tempCallback)
         } else {
             exoLocalVideoPlayer?.setMediaSource(buildSingleLocalVideoPlayerSource(index))
             exoLocalVideoPlayer?.seekTo(0, 0)
@@ -636,6 +795,11 @@ class PlayerManager private constructor(
                     releaseWakeLock()
                 }
                 isPlaying = true
+                
+                // Start preview timer for unpurchased music
+                val currentMusic = getCurrentMusicItem()
+                startPreviewTimer(currentMusic)
+                
                 return true
             }
         } finally {
@@ -660,6 +824,10 @@ class PlayerManager private constructor(
                 exoPlayerMusic?.pause()
                 exoPlayerVoice?.pause()
                 exoLocalVideoPlayer?.pause()
+                
+                // Stop preview timer when paused
+                stopPreviewTimer()
+                
                 isPlaying = false
                 releaseWakeLock()
                 return true
@@ -676,6 +844,10 @@ class PlayerManager private constructor(
         exoPlayerMusic?.pause()
         exoPlayerVoice?.pause()
         exoLocalVideoPlayer?.pause()
+        
+        // Stop preview timer when force paused
+        stopPreviewTimer()
+        
         isPlaying = false
         releaseWakeLock()
     }
@@ -985,6 +1157,7 @@ class PlayerManager private constructor(
     fun destroy() {
         isPlaying = false
         pauseHueEffect()
+        stopPreviewTimer() // Stop preview timer
         releasePlayers()
         releaseResources()
         releaseWakeLock()
@@ -1287,8 +1460,9 @@ class PlayerManager private constructor(
     private fun acquireWakeLock() {
         try {
             if (wakeLock?.isHeld == false) {
-                wakeLock?.acquire()
-                LogSystem.e(TAG, "Wake lock acquired - screen will stay on")
+                // 10 hour timeout as safety measure to prevent indefinite battery drain
+                wakeLock?.acquire(10 * 60 * 60 * 1000L)
+                LogSystem.e(TAG, "Wake lock acquired with 10h timeout - screen will stay on")
             }
         } catch (e: Exception) {
             LogSystem.e(TAG, "Failed to acquire wake lock: ${e.message}")
