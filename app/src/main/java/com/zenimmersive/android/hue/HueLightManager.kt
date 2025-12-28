@@ -117,6 +117,75 @@ class HueLightManager(var context: Context) {
         bridgeIp = ""
         userHueApiToken = ""
 
+        val discoveredBridges = java.util.Collections.synchronizedList(ArrayList<Bridge>())
+        var nUpnpFinished = false
+        var mdnsFinished = false
+        var ssdpFinished = false
+        var hasReportedResult = false
+
+        // Helper to report results once all methods finish or if we find something
+        fun checkAndReportResults() {
+            synchronized(LOCK) {
+                if (hasReportedResult) return
+
+                if (discoveredBridges.isNotEmpty()) {
+                    hasReportedResult = true
+                    // Convert to simple list to avoid concurrency issues during iteration
+                    val distinctBridges = discoveredBridges.distinctBy { it.ipAddress }
+                    tryNextBridge(distinctBridges, 0, taskCallback)
+                    return
+                }
+
+                if (nUpnpFinished && mdnsFinished && ssdpFinished) {
+                    hasReportedResult = true
+                    mainHandler.post {
+                        taskCallback?.onTaskError(context.getString(R.string.error_no_bridge_found))
+                    }
+                }
+            }
+        }
+
+        // 1. Run mDNS Discovery
+        val mdnsDiscovery = HueMdnsDiscovery(context)
+        mdnsDiscovery.startDiscovery(object : HueMdnsDiscovery.DiscoveryCallback {
+            override fun onBridgeFound(bridge: Bridge) {
+                discoveredBridges.add(bridge)
+            }
+
+            override fun onDiscoveryFinished(bridges: List<Bridge>) {
+                LogSystem.e("mDNS Discovery Finished. Found ${bridges.size} bridges.")
+                mdnsFinished = true
+                checkAndReportResults()
+            }
+
+            override fun onError(error: String) {
+                LogSystem.e("mDNS Discovery Error: $error")
+                mdnsFinished = true
+                checkAndReportResults()
+            }
+        })
+
+        // 2. Run SSDP Discovery
+        val ssdpDiscovery = HueSsdpDiscovery(context)
+        ssdpDiscovery.startDiscovery(object : HueSsdpDiscovery.DiscoveryCallback {
+            override fun onBridgeFound(bridge: Bridge) {
+                discoveredBridges.add(bridge)
+            }
+
+            override fun onDiscoveryFinished(bridges: List<Bridge>) {
+                LogSystem.e("SSDP Discovery Finished. Found ${bridges.size} bridges.")
+                ssdpFinished = true
+                checkAndReportResults()
+            }
+
+            override fun onError(error: String) {
+                LogSystem.e("SSDP Discovery Error: $error")
+                ssdpFinished = true
+                checkAndReportResults()
+            }
+        })
+
+        // 2. Run N-UPnP Discovery (Original Logic)
         var client = OkHttpClient()
         val url = HueOkHttpClient.discoveryURL;
         val request: Request = Request.Builder().url(url).build()
@@ -125,32 +194,25 @@ class HueLightManager(var context: Context) {
         client.newCall(request).enqueue(responseCallback = object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 LogSystem.e("URL : $url\nError : ${e.message}")
-                mainHandler.post { 
-                    taskCallback?.onTaskError(
-                        context.getString(R.string.error_bridge_discovery_failed, e.message ?: "Unknown")
-                    ) 
-                }
+                nUpnpFinished = true
+                checkAndReportResults()
             }
 
             override fun onResponse(call: Call, response: Response) {
                 var responseData = response.body?.string()
                 LogSystem.e("URL : $url\nResult : $responseData")
                 if (response.isSuccessful) {
-                    var json = JSONArray(responseData)
-                    var typeToken = object : TypeToken<List<Bridge>>() {}
-                    var bridges = Gson().fromJson<List<Bridge>>(json.toString(), typeToken.type)
-
-                    if (bridges.isNotEmpty()) {
-                        // Try each bridge recursively until we find an active one
-                        tryNextBridge(bridges, 0, taskCallback)
-                    } else {
-                        mainHandler.post { 
-                            taskCallback?.onTaskError(context.getString(R.string.error_no_bridge_found)) 
-                        }
+                    try {
+                        var json = JSONArray(responseData)
+                        var typeToken = object : TypeToken<List<Bridge>>() {}
+                        var bridges = Gson().fromJson<List<Bridge>>(json.toString(), typeToken.type)
+                        discoveredBridges.addAll(bridges)
+                    } catch (e: Exception) {
+                         LogSystem.e("N-UPnP Parse Error: ${e.message}")
                     }
-                } else {
-                    mainHandler.post { taskCallback?.onTaskError(responseData) }
                 }
+                nUpnpFinished = true
+                checkAndReportResults()
             }
 
         })
