@@ -58,17 +58,7 @@ class RcvLightsAdapter(var MAX_HUE: Int) : RecyclerView.Adapter<RecyclerView.Vie
             lightHolder.viewBinding.lightState.post {
                 lightHolder.viewBinding.lightState.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
-                        if (HueLightManager.getInstance(context)
-                                .getWorkingLightCount() >= MAX_HUE
-                        ) {
-                            lightHolder.viewBinding.lightState.isChecked = false
-                            showToast(context,
-                                context.getString(
-                                    R.string.maximum_lights_can_be_on_at_a_time,
-                                    MAX_HUE
-                                ))
-                            return@setOnCheckedChangeListener
-                        }
+
                     }
 
                     itemList[position].light?.let { light ->
@@ -77,6 +67,8 @@ class RcvLightsAdapter(var MAX_HUE: Int) : RecyclerView.Adapter<RecyclerView.Vie
                             light,
                             isChecked
                         )
+                        // Trigger Zone Update whenever selection changes
+                        HueLightManager.getInstance(context).ensureZenZoneGroup()
                     }
                 }
 

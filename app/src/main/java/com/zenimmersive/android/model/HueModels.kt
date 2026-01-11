@@ -229,3 +229,27 @@ class LightListResult {
     @SerializedName("unConfigLights")
     var unConfigLights: List<Light>? = null
 }
+
+data class HueZoneListResult(
+    @SerializedName("errors") var errors: ArrayList<String> = arrayListOf(),
+    @SerializedName("data") var data: ArrayList<HueZone> = arrayListOf()
+)
+
+data class HueZone(
+    @SerializedName("id") var id: String? = null,
+    @SerializedName("id_v1") var idV1: String? = null,
+    @SerializedName("children") var children: ArrayList<Children> = arrayListOf(),
+    @SerializedName("services") var services: ArrayList<Services> = arrayListOf(),
+    @SerializedName("metadata") var metadata: Metadata? = Metadata(),
+    @SerializedName("type") var type: String? = null
+)
+
+data class EffectsV2(
+    @SerializedName("action") var action: EffectAction? = null,
+    @SerializedName("status") var status: String? = null,
+    @SerializedName("type") var type: String? = null
+)
+
+data class EffectAction(
+    @SerializedName("effect") var effect: String? = null
+)

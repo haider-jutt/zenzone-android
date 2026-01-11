@@ -22,6 +22,10 @@ object HueOkHttpClient {
     private const val LightListUrl = protocall + "://%s/clip/v2/resource/light"
     private const val LightDetailUrl = protocall + "://%s/clip/v2/resource/light/%s"
     private const val RoomListUrl = protocall + "://%s/clip/v2/resource/room"
+    private const val ZoneUrl = protocall + "://%s/clip/v2/resource/zone"
+    private const val ZoneDetailUrl = protocall + "://%s/clip/v2/resource/zone/%s"
+    private const val GroupedLightUrl = protocall + "://%s/clip/v2/resource/grouped_light"
+    private const val GroupedLightDetailUrl = protocall + "://%s/clip/v2/resource/grouped_light/%s"
 
     fun getConfigurationURL(bridgeIp: String?): String {
         return String.format(Locale.ENGLISH, ConfigUrl, bridgeIp)
@@ -41,6 +45,22 @@ object HueOkHttpClient {
 
     fun getRoomURL(bridgeIp: String?): String {
         return String.format(Locale.ENGLISH, RoomListUrl, bridgeIp)
+    }
+
+    fun getZoneURL(bridgeIp: String?): String {
+        return String.format(Locale.ENGLISH, ZoneUrl, bridgeIp)
+    }
+
+    fun getZoneURL(bridgeIp: String?, zoneId: String?): String {
+        return String.format(Locale.ENGLISH, ZoneDetailUrl, bridgeIp, zoneId)
+    }
+
+    fun getGroupedLightURL(bridgeIp: String?): String {
+        return String.format(Locale.ENGLISH, GroupedLightUrl, bridgeIp)
+    }
+
+    fun getGroupedLightURL(bridgeIp: String?, groupedLightId: String?): String {
+        return String.format(Locale.ENGLISH, GroupedLightDetailUrl, bridgeIp, groupedLightId)
     }
 
     val discoveryURL: String

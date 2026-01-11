@@ -10,6 +10,10 @@ import com.zenimmersive.android.model.Light
 import com.zenimmersive.android.model.LightListResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -385,6 +389,7 @@ class HueLightManager(var context: Context) {
                         try {
                             if (result.error.isNullOrEmpty()) {
                                 lightListResult = result
+                                ensureZenZoneGroup() // Auto-sync Zone on fresh fetch
                                 taskCallback?.onTaskComplete(result)
                             } else {
                                 taskCallback?.onTaskError(result.error)
@@ -479,6 +484,112 @@ class HueLightManager(var context: Context) {
         LogSystem.e("Revert Light States Invoked : ${temp?.lights?.size}")
         getLightListSyncronized()?.lights?.forEach { light ->
             hueLightClient.changeLightStateAsync(light, false, isRevert = true)
+        }
+    }
+
+    private var groupedLightId: String? = null
+    private val ZEN_ZONE_NAME = "Zen Immersive – Main Scene"
+
+    fun ensureZenZoneGroup(callback: TaskCallback<String>? = null) {
+        if (!isBridgeActive) {
+            callback?.onTaskError(context.getString(R.string.error_bridge_not_active))
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // 1. Get selected lights
+                val selectedLights = getLightListSyncronized()?.lights?.filter { it.systemUseCase == true } ?: emptyList()
+                if (selectedLights.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        callback?.onTaskError("No lights selected")
+                    }
+                    return@launch
+                }
+
+                // 2. Fetch existing zones
+                val zones = hueLightClient.getZones()
+                var zenZone = zones.find { it.metadata?.name == ZEN_ZONE_NAME }
+
+                // 3. Sync Zone
+                if (zenZone == null) {
+                    LogSystem.e("HueLightManager", "Creating new Zen Zone: $ZEN_ZONE_NAME with ${selectedLights.size} lights")
+                    // Create new zone
+                    zenZone = hueLightClient.createZone(ZEN_ZONE_NAME, selectedLights)
+                } else {
+                    // Check if update needed
+                    // Simple check: count and IDs.
+                    val currentChildIds = zenZone.children.map { it.rid }.toSet()
+                    val selectedIds = selectedLights.map { it.id }.toSet()
+                    
+                    if (currentChildIds != selectedIds) {
+                        LogSystem.e("HueLightManager", "Updating Zen Zone: $ZEN_ZONE_NAME. Lights changed from ${currentChildIds.size} to ${selectedIds.size}")
+                        hueLightClient.updateZone(zenZone.id!!, selectedLights)
+                        // Re-fetch zone to be sure we have latest services? 
+                        // Actually updateZone returns response string, simpler to just use existing object ID and rely on bridge
+                    }
+                }
+
+                // 4. Resolve Grouped Light ID
+                // We need to look for 'grouped_light' service in the zone
+                // If we arguably just created it, the local object 'zenZone' has services. 
+                // However, createZone return might be null or valid. 
+                // If updated, we might need to re-fetch to get services if they weren't in list result?
+                // Usually list result includes services.
+                
+                // Let's re-fetch the specific zone to be 100% sure we have services if we just updated it or if list was partial
+                if (zenZone != null) {
+                     val zonesRefreshed = hueLightClient.getZones() 
+                     zenZone = zonesRefreshed.find { it.metadata?.name == ZEN_ZONE_NAME }
+                }
+
+                val groupedLightService = zenZone?.services?.find { it.rtype == "grouped_light" }
+                groupedLightId = groupedLightService?.rid
+                
+                withContext(Dispatchers.Main) {
+                    if (groupedLightId != null) {
+                        LogSystem.e("HueLightManager", "Grouped Light ID Resolved: $groupedLightId")
+                        callback?.onTaskComplete(groupedLightId!!)
+                    } else {
+                        LogSystem.e("HueLightManager", "Failed to resolve Grouped Light ID")
+                        callback?.onTaskError("Failed to resolve Grouped Light ID")
+                    }
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    callback?.onTaskError(e.message)
+                }
+            }
+        }
+    }
+
+    fun controlGroup(
+        on: Boolean,
+        brightness: Float?,
+        x: Double?,
+        y: Double?,
+        effect: String?
+    ) {
+        if (groupedLightId != null) {
+            hueLightClient.controlGroupedLight(groupedLightId!!, on, brightness, x, y, effect)
+        } else {
+            // Fallback to individual light control
+            // Note: effect logic for fallback is NOT supported per requirements (or minimal support)
+            // Requirements say: "Fallback ... to per-light requests... No change at timeline level"
+            // So we just iterate.
+            getLightListSyncronized()?.let {
+                for (light in it.lights ?: emptyList()) {
+                    if (light.systemUseCase == true) {
+                        if (x != null && y != null) {
+                             hueLightClient.changeLightColor(light, x, y, brightness?.toInt() ?: 100)
+                        } else if (brightness != null) {
+                             hueLightClient.changeBrightness(light, brightness)
+                        }
+                    }
+                }
+            }
         }
     }
 

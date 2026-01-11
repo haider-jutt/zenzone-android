@@ -9,6 +9,8 @@ import com.zenimmersive.android.model.Dimming
 import com.zenimmersive.android.model.HueLightListResult
 import com.zenimmersive.android.model.HueRoom
 import com.zenimmersive.android.model.HueRoomListResult
+import com.zenimmersive.android.model.HueZone
+import com.zenimmersive.android.model.HueZoneListResult
 import com.zenimmersive.android.model.Light
 import com.zenimmersive.android.model.LightListResult
 import com.zenimmersive.android.model.Xy
@@ -19,6 +21,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -287,6 +290,155 @@ class HueLightClient(var context: Context) {
         })
     }
 
+    fun getZones(): List<HueZone> {
+        LogSystem.e(TAG, "Fetch Zone List $bridgeIp Invoked")
+        val url = HueOkHttpClient.getZoneURL(bridgeIp)
+        val request: Request =
+            Request.Builder().url(url).addHeader("hue-application-key", userHueApiToken).build()
+
+        var response = client.newCall(request).execute()
+        var responseData = response.body?.string()
+        LogSystem.e(TAG, "URL : $url\nResult : $responseData")
+        if (response.isSuccessful) {
+            var result = Gson().fromJson(responseData, HueZoneListResult::class.java)
+            return result.data
+        }
+        return emptyList()
+    }
+
+    fun createZone(name: String, lights: List<Light>): HueZone? {
+        LogSystem.e(TAG, "Create Zone Invoked Name: $name LightCount: ${lights.size}")
+        val url = HueOkHttpClient.getZoneURL(bridgeIp)
+        
+        val childrenArray = JSONArray()
+        lights.forEach { light ->
+            childrenArray.put(JSONObject().put("rid", light.id).put("rtype", "light"))
+        }
+
+        val jsonBody = JSONObject().apply {
+            put("type", "zone")
+            put("metadata", JSONObject().put("name", name).put("archetype", "other"))
+            put("children", childrenArray)
+        }
+
+        val request: Request = Request.Builder()
+            .url(url)
+            .post(jsonBody.toString().toRequestBody())
+            .addHeader("hue-application-key", userHueApiToken)
+            .build()
+
+        var response = client.newCall(request).execute()
+        var responseData = response.body?.string()
+        LogSystem.e(TAG, "Create Zone Result: $responseData")
+        
+        if (response.isSuccessful) {
+            // response might be a list containing the created resource
+             var result = Gson().fromJson(responseData, HueZoneListResult::class.java)
+             return result.data.firstOrNull()
+        }
+        return null
+    }
+
+    fun updateZone(zoneId: String, lights: List<Light>): String? {
+        LogSystem.e(TAG, "Update Zone Invoked ID: $zoneId LightCount: ${lights.size}")
+        val url = HueOkHttpClient.getZoneURL(bridgeIp, zoneId)
+
+        val childrenArray = JSONArray()
+        lights.forEach { light ->
+             // Note: In V2, we link the 'device' or 'light' resource?
+             // Document says: { "rid": "LIGHT_ID", "rtype": "light" }
+             childrenArray.put(JSONObject().put("rid", light.id).put("rtype", "light"))
+        }
+
+        val jsonBody = JSONObject().apply {
+            put("type", "zone")
+            put("children", childrenArray)
+        }
+        
+        val request: Request = Request.Builder()
+            .url(url)
+            .put(jsonBody.toString().toRequestBody())
+            .addHeader("hue-application-key", userHueApiToken)
+            .build()
+            
+        var response = client.newCall(request).execute()
+        return response.body?.string()
+    }
+
+    fun controlGroupedLight(
+        groupedLightId: String,
+        on: Boolean,
+        brightness: Float?,
+        x: Double?,
+        y: Double?,
+        effect: String?
+    ) {
+        val url = HueOkHttpClient.getGroupedLightURL(bridgeIp, groupedLightId)
+        val params = JSONObject()
+
+        params.put("on", JSONObject().put("on", on))
+        
+        if (brightness != null) {
+             params.put("dimming", JSONObject().put("brightness", brightness))
+        }
+
+        // Effect Logic
+        if (!effect.isNullOrEmpty() && effect != "no_effect") {
+            params.put("effects_v2", JSONObject().put("action", "dynamic_palette")) // Wait, doc says "action": { "effect": "fire" } for palette, but check doc again.
+            // Client Doc says:
+            // "effects": { "effect": "fire" } (Wait, looking at doc snippet)
+            // "effects_v2": { "action": { "effect": "cosmos" } }
+            
+            params.put("effects_v2", JSONObject().put("action", JSONObject().put("effect", effect)))
+            
+            // Check if color seeded
+            val isPaletteLocked = listOf("fire", "candle").contains(effect)
+            if (!isPaletteLocked && x != null && y != null) {
+                 params.put(
+                    "color",
+                    JSONObject().put(
+                        "xy",
+                        JSONObject().put("x", x).put("y", y)
+                    )
+                )
+            }
+        } else {
+            // Normal Color Mode
+            if (effect == "no_effect") {
+                 params.put("effects_v2", JSONObject().put("action", JSONObject().put("effect", "no_effect")))
+            }
+            
+            if (x != null && y != null) {
+                params.put(
+                    "color",
+                    JSONObject().put(
+                        "xy",
+                        JSONObject().put("x", x).put("y", y)
+                    )
+                )
+            }
+        }
+        
+        LogSystem.e(TAG, "Control Grouped Light URL: $url Params: $params")
+
+        val request: Request = Request.Builder()
+            .url(url)
+            .put(params.toString().toRequestBody())
+            .addHeader("hue-application-key", userHueApiToken)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                LogSystem.e(TAG, "Group Control Failed: ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                 // LogSystem.e(TAG, "Group Control Success: ${response.code}")
+                 response.close()
+            }
+        })
+    }    
+    
     fun changeBrightness(light: Light, level: Float) {
         if (light.systemUseCase == false) return
         if (light?.dimming == null) light.dimming = Dimming()

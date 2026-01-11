@@ -110,25 +110,16 @@ object HueColorManager {
                     return@launch
                 }
 
-                hueLightManager.getLightListSyncronized()?.let {
-                    var colorChange = false
-                    (it.lights ?: emptyList()).forEach {
-                        if (it.systemUseCase == true) {
-                            hueLightManager.changeLightColor(
-                                it,
-                                colorXY.x.toDouble(),
-                                colorXY.y.toDouble(),
-                                PlayerManager.getInstance()?.staticBrightness
-                                    ?: colorXY.brightness.toInt()
-                            )
-                            colorChange = true
-                        }
-                    }
-
-                    if (colorChange) {
-                        lastColor = colorXY
-                    }
-                }
+                // Hue V2 Group Control
+                hueLightManager.controlGroup(
+                    on = true,
+                    brightness = (PlayerManager.getInstance()?.staticBrightness ?: colorXY.brightness.toInt()).toFloat(),
+                    x = colorXY.x.toDouble(),
+                    y = colorXY.y.toDouble(),
+                    effect = colorXY.effect
+                )
+                
+                lastColor = colorXY
 
             }
 
@@ -323,6 +314,11 @@ object HueColorManager {
 //                        }
                         val brightness =
                             if (parts[4].contains("\r")) parts[4].replace("\r", "") else parts[4]
+                        
+                        var effectString: String? = null
+                        if (parts.size > 5) {
+                             effectString = if (parts[5].contains("\r")) parts[5].replace("\r", "") else parts[5]
+                        }
 
                         colorIntervals.add(
                             ColorInterval(
@@ -330,7 +326,8 @@ object HueColorManager {
                                 endTime = endTime,
                                 x = x,
                                 y = y,
-                                brightness = brightness
+                                brightness = brightness,
+                                effect = effectString
                             )
                         )
                     }
@@ -362,10 +359,11 @@ object HueColorManager {
         val endTime: Long,
         var x: String,
         var y: String,
-        var brightness: String
+        var brightness: String,
+        var effect: String? = null
     ) {
         override fun toString(): String {
-            return "ColorInterval($startTime, $endTime, $x, $y, $brightness)"
+            return "ColorInterval($startTime, $endTime, $x, $y, $brightness, $effect)"
         }
     }
 }
