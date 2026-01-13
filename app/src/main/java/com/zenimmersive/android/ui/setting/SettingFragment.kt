@@ -19,6 +19,7 @@ import com.zenimmersive.android.helper.KeyStorage
 import com.zenimmersive.android.helper.KeyStorage.Companion.KEY_USER_ID
 import com.zenimmersive.android.helper.KeyStorage.Companion.KEY_USER_TOKEN
 import com.zenimmersive.android.repository.SettingRepository
+import com.zenimmersive.android.spatial.SpatialDemoActivity
 import com.zenimmersive.android.ui.AuthenticationOptionActivity
 import com.zenimmersive.android.ui.BackPressListener
 import com.zenimmersive.android.ui.DashboardActivity
@@ -110,6 +111,11 @@ class SettingFragment : BaseFragment<SettingViewModel, FragmentSettingBinding, S
 
         viewBinding.rlLightsManagement.setOnClickListener {
             startActivity(Intent(requireContext(), HueManagementActivity::class.java))
+        }
+
+        // Spatial Demo - new 2.5D effect demo
+        viewBinding.rlSpatialDemo.setOnClickListener {
+            startActivity(Intent(requireContext(), SpatialDemoActivity::class.java))
         }
 
         viewBinding.tvLogout.setOnClickListener {

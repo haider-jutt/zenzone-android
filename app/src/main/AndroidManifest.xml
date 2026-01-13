@@ -89,6 +89,13 @@
         <activity
             android:name=".ui.HueManagementActivity"
             android:exported="false" />
+        
+        <!-- Spatial Demo Activity for ZEN IMMERSIVE -->
+        <activity
+            android:name=".spatial.SpatialDemoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Dreamaid.Fullscreen" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
