@@ -66,27 +66,6 @@
                     android:textStyle="bold"
                     app:fontFamily="@font/averia_libre" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/ivFilter"
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_filter"
-                        app:tint="@color/white" />
-
-                    <View
-                        android:id="@+id/viewFilterDot"
-                        android:layout_width="@dimen/_5sdp"
-                        android:layout_height="@dimen/_5sdp"
-                        android:layout_gravity="end"
-                        android:background="@drawable/circle_red"
-                        android:visibility="gone" />
-
-                </FrameLayout>
-
 
             </LinearLayout>
 
