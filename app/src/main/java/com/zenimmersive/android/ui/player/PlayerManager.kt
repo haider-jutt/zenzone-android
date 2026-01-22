@@ -64,6 +64,9 @@ class PlayerManager private constructor(
     var isNarrator = false
     private var isMusicReady = false
     private var isVoiceReady = false
+    // Some items may be narration-only (no music file) or music-only (no narration file).
+    private var hasMusicSource = true
+    private var hasVoiceSource = true
 
     init {
         playerManagerInstance = this
@@ -412,17 +415,21 @@ class PlayerManager private constructor(
         val audioFile = playerMusicList.getOrNull(selectMusicIndex)
         val audioNarratorURL = audioFile?.getNarratorAudioFile(lan) ?: ""
         if (audioNarratorURL.isEmpty()) {
+            hasVoiceSource = false
             exoPlayerVoice?.release()
             exoPlayerVoice = null
             isVoiceReady = true
+            playerListener?.onPlayerStateChanged(isMusicReady, isVoiceReady)
+            tempCallback?.onPlayerStateChanged(isMusicReady, isVoiceReady)
             return
         }
 
+        hasVoiceSource = true
 
         exoPlayerVoice = (exoPlayerVoice ?: ExoPlayer.Builder(context)
             .setRenderersFactory(DefaultRenderersFactory(context).setEnableDecoderFallback(true))
             .setLoadControl(loadControl)
-            .setAudioAttributes(buildAudioAttributes(), true)  // Enable audio focus handling
+            .setAudioAttributes(buildAudioAttributes(), false)
             .build()).apply {
             setMediaSource(buildSingleNarratorAudioPlayerSource(selectMusicIndex))
             seekTo(0, playerMusicList[selectMusicIndex].lastTimeMusicPosition ?: 0L)
@@ -445,6 +452,10 @@ class PlayerManager private constructor(
                             isVoiceReady = true
                             playerListener?.onPlayerStateChanged(isMusicReady, isVoiceReady)
                             tempCallback?.onPlayerStateChanged(isMusicReady, isVoiceReady)
+                            // If we paused music due to voice buffering, resume it when voice is ready again.
+                            if (isPlaying && hasMusicSource && isMusicReady && exoPlayerMusic?.isPlaying != true) {
+                                exoPlayerMusic?.play()
+                            }
                             if (isRemoteClientConnected()) {
                                 remoteMediaClient =
                                     castContext?.sessionManager?.currentCastSession?.remoteMediaClient
@@ -560,6 +571,20 @@ class PlayerManager private constructor(
 
         val audioFile = playerMusicList.getOrNull(selectMusicIndex) ?: playerMusicList.first()
         HueColorManager.loadColorData(context, audioFile)
+        val lan = KeyStorage.getInstance(context).getString(APP_SELECTED_LANGUAGE, "en")
+        val audioFileUrl = audioFile.getAudioFile(lan)
+        if (audioFileUrl.isEmpty()) {
+            // Narration-only item (or missing music file). Avoid creating a broken ExoPlayer source.
+            hasMusicSource = false
+            exoPlayerMusic?.release()
+            exoPlayerMusic = null
+            isMusicReady = true
+            playerListener?.onPlayerStateChanged(isMusicReady, isVoiceReady)
+            tempCallback?.onPlayerStateChanged(isMusicReady, isVoiceReady)
+            return
+        } else {
+            hasMusicSource = true
+        }
 
         exoPlayerMusic = (exoPlayerMusic ?: ExoPlayer.Builder(context)
             .setRenderersFactory(DefaultRenderersFactory(context).setEnableDecoderFallback(true))
@@ -585,6 +610,10 @@ class PlayerManager private constructor(
                             isMusicReady = true
                             playerListener?.onPlayerStateChanged(isMusicReady, isVoiceReady)
                             tempCallback?.onPlayerStateChanged(isMusicReady, isVoiceReady)
+                            // If we paused voice due to music buffering, resume it when music is ready again.
+                            if (isPlaying && hasVoiceSource && isVoiceReady && exoPlayerVoice?.isPlaying != true) {
+                                exoPlayerVoice?.play()
+                            }
                             if (isRemoteClientConnected()) {
                                 remoteMediaClient =
                                     castContext?.sessionManager?.currentCastSession?.remoteMediaClient
@@ -724,16 +753,30 @@ class PlayerManager private constructor(
         LogSystem.e(TAG, "initializePlayersIfNeed Invoked Index : ${index}")
         _currentMediaItemIndex = index
         LocalVideoPlayerPropertyManager.isPlayButtonPressed = false
+        val lan = KeyStorage.getInstance(context).getString(APP_SELECTED_LANGUAGE, "en")
+        val currentItem = playerMusicList.getOrNull(index)
+        val currentMusicUrl = currentItem?.getAudioFile(lan) ?: ""
+        val currentNarratorUrl = currentItem?.getNarratorAudioFile(lan) ?: ""
+        hasMusicSource = currentMusicUrl.isNotEmpty()
+        hasVoiceSource = currentNarratorUrl.isNotEmpty()
 
         // Always setup players with current index for single media source approach
-        if (exoPlayerMusic == null) {
+        if (!hasMusicSource) {
+            exoPlayerMusic?.release()
+            exoPlayerMusic = null
+            isMusicReady = true
+        } else if (exoPlayerMusic == null) {
             setupMusicAudioPlayer(getAdaptiveLoadControl(), index, tempCallback)
         } else {
             exoPlayerMusic?.setMediaSource(buildSingleMusicAudioPlayerSource(index))
             exoPlayerMusic?.seekTo(0, playerMusicList[index].lastTimeMusicPosition ?: 0L)
         }
 
-        if (exoPlayerVoice == null) {
+        if (!hasVoiceSource) {
+            exoPlayerVoice?.release()
+            exoPlayerVoice = null
+            isVoiceReady = true
+        } else if (exoPlayerVoice == null) {
             setupNarratorAudioPlayer(
                 getAdaptiveLoadControl(),
                 index,
@@ -1080,7 +1123,7 @@ class PlayerManager private constructor(
 
     @Synchronized
     fun isPlayerReady(): Boolean {
-        return isMusicReady && isVoiceReady
+        return (!hasMusicSource || isMusicReady) && (!hasVoiceSource || isVoiceReady)
     }
 
     fun changeMusicPlayerVolume(volume: Float) {
@@ -1104,8 +1147,9 @@ class PlayerManager private constructor(
                 var duration = remoteMediaClient?.streamDuration ?: 0L
                 return duration
             }
-            val duration = exoPlayerMusic?.duration ?: 0
-            return duration
+            val musicDuration = if (hasMusicSource) (exoPlayerMusic?.duration ?: 0L) else 0L
+            val voiceDuration = if (hasVoiceSource) (exoPlayerVoice?.duration ?: 0L) else 0L
+            return maxOf(musicDuration, voiceDuration)
         }
         return 0
     }
@@ -1119,8 +1163,11 @@ class PlayerManager private constructor(
 
                 return position
             }
-            val position = exoPlayerMusic?.currentPosition ?: 0
-            return position
+            val musicPos = if (hasMusicSource) (exoPlayerMusic?.currentPosition ?: 0L) else 0L
+            val voicePos = if (hasVoiceSource) (exoPlayerVoice?.currentPosition ?: 0L) else 0L
+            val videoPos = exoLocalVideoPlayer?.currentPosition ?: 0L
+            // Use max to avoid "stuck" UI when one of the players is paused/missing.
+            return maxOf(musicPos, voicePos, videoPos)
         }
         return 0
     }
