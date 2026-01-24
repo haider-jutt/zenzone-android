@@ -833,10 +833,9 @@ class PlayerManager private constructor(
                 exoPlayerVoice?.play()
                 if (LocalVideoPlayerPropertyManager.isPlayButtonPressed) {
                     exoLocalVideoPlayer?.play()
-                    acquireWakeLock()
-                } else {
-                    releaseWakeLock()
                 }
+                // Always acquire wake lock when playing (audio or video) to keep screen on during meditation
+                acquireWakeLock()
                 isPlaying = true
                 
                 // Start preview timer for unpurchased music
