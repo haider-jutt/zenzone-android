@@ -60,6 +60,9 @@ class PlayerManager private constructor(
     private var isCasting = false
     private var isLoadingCastMedia = false
     private var lastCastPosition: Long = 0L
+    
+    // Video sync controller for A/V synchronization
+    private var videoSyncController: VideoSyncController? = null
 
     var isNarrator = false
     private var isMusicReady = false
@@ -80,6 +83,8 @@ class PlayerManager private constructor(
         remoteMediaClient =
             AppCastManager.castContext?.sessionManager?.currentCastSession?.remoteMediaClient
         
+        // Initialize video sync controller
+        videoSyncController = VideoSyncController()
         
         initializeWakeLock()
     }
@@ -715,6 +720,12 @@ class PlayerManager private constructor(
 
         playerMusicList[index].lastTimeMusicPosition = 0L
 
+        // Clear subtitles when switching tracks during cast
+        if (isRemoteClientConnected()) {
+            disableSubtitle()
+            LogSystem.e(TAG, "Chromecast: Subtitles cleared before switching to previous track")
+        }
+
         releasePlayers()
         setupSources()
         exoPlayerMusic?.seekTo(0, 0)
@@ -738,6 +749,12 @@ class PlayerManager private constructor(
         _currentMediaItemIndex = index
 
         playerMusicList[index].lastTimeMusicPosition = 0L
+
+        // Clear subtitles when switching tracks during cast
+        if (isRemoteClientConnected()) {
+            disableSubtitle()
+            LogSystem.e(TAG, "Chromecast: Subtitles cleared before switching to next track")
+        }
 
         releasePlayers()
         setupSources()
@@ -833,6 +850,8 @@ class PlayerManager private constructor(
                 exoPlayerVoice?.play()
                 if (LocalVideoPlayerPropertyManager.isPlayButtonPressed) {
                     exoLocalVideoPlayer?.play()
+                    // Start video sync when video is playing
+                    startVideoSync()
                 }
                 // Always acquire wake lock when playing (audio or video) to keep screen on during meditation
                 acquireWakeLock()
@@ -867,6 +886,9 @@ class PlayerManager private constructor(
                 exoPlayerVoice?.pause()
                 exoLocalVideoPlayer?.pause()
                 
+                // Stop video sync when paused
+                stopVideoSync()
+                
                 // Stop preview timer when paused
                 stopPreviewTimer()
                 
@@ -886,6 +908,9 @@ class PlayerManager private constructor(
         exoPlayerMusic?.pause()
         exoPlayerVoice?.pause()
         exoLocalVideoPlayer?.pause()
+        
+        // Stop video sync when force paused
+        stopVideoSync()
         
         // Stop preview timer when force paused
         stopPreviewTimer()
@@ -933,6 +958,7 @@ class PlayerManager private constructor(
         override fun onMediaError(p0: MediaError) {
             super.onMediaError(p0)
             LogSystem.e(TAG, "RemoteMedia Error : ${p0.toJson()}")
+            LogSystem.e(TAG, "Chromecast: Media error occurred, clearing subtitle state")
             remoteMediaClient?.stop()
             remoteMediaClient = null
             isCasting = false
@@ -947,6 +973,12 @@ class PlayerManager private constructor(
             super.onStatusUpdated()
             val playerState = remoteMediaClient?.playerState
             var idleReason = remoteMediaClient?.idleReason
+            
+            // Log subtitle state for debugging
+            val activeTrackIds = remoteMediaClient?.mediaStatus?.activeTrackIds
+            val hasActiveSubtitle = activeTrackIds?.contains(1L) ?: false
+            LogSystem.e(TAG, "Chromecast: Status update - Player state: $playerState, Active subtitle: $hasActiveSubtitle, Track IDs: ${activeTrackIds?.joinToString()}")
+            
             LogSystem.e(TAG, "RemoteMedia State : $playerState")
             
             // Sync position continuously during cast
@@ -957,8 +989,16 @@ class PlayerManager private constructor(
                 playerMusicList.getOrNull(index)?.lastTimeMusicPosition = currentPosition
             }
             
+            // Log buffering info for A/V sync debugging
+            val mediaStatus = remoteMediaClient?.mediaStatus
+            if (mediaStatus != null) {
+                LogSystem.e(TAG, "Chromecast A/V Debug: Position=${currentPosition}ms, PlaybackRate=${mediaStatus.playbackRate}, " +
+                    "StreamDuration=${remoteMediaClient?.streamDuration}ms")
+            }
+            
             when (playerState) {
                 MediaStatus.PLAYER_STATE_LOADING, MediaStatus.PLAYER_STATE_BUFFERING -> {
+                    LogSystem.e(TAG, "Chromecast: Buffering - this may affect A/V sync")
                     playerListener?.onPlaybackStateChanged(Player.STATE_BUFFERING)
                     pauseHueEffect()
                     isLoadingCastMedia = false
@@ -979,6 +1019,7 @@ class PlayerManager private constructor(
 
                 MediaStatus.PLAYER_STATE_IDLE -> {
                     if (idleReason == MediaStatus.IDLE_REASON_FINISHED || idleReason == MediaStatus.IDLE_REASON_ERROR) {
+                        LogSystem.e(TAG, "Chromecast: Media ended or error, clearing subtitle state")
                         playerListener?.onPlaybackStateChanged(Player.STATE_ENDED)
                     }
                     playerListener?.onPlaybackStateChanged(Player.STATE_IDLE)
@@ -1001,6 +1042,14 @@ class PlayerManager private constructor(
         
         isLoadingCastMedia = true
         isCasting = true
+        
+        // Clear existing subtitles before loading new media
+        try {
+            disableSubtitle()
+            LogSystem.e(TAG, "Chromecast: Subtitles cleared before loading new media from $caller")
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Chromecast: Error clearing subtitles: ${e.message}")
+        }
         
         // Store current position before releasing players
         val currentPosition = getPlayerPosition()
@@ -1038,6 +1087,24 @@ class PlayerManager private constructor(
             TAG,
             "RemoteMedia loadMedia [${musicItem.songName}] lanVideoFileStream : $lanVideoFileStream"
         )
+        
+        // Enhanced logging for debugging URL selection and media loading
+        LogSystem.e(TAG, "Chromecast Media Debug Info:")
+        LogSystem.e(TAG, "  - Song: ${musicItem.songName} (ID: ${musicItem.songId})")
+        LogSystem.e(TAG, "  - Language: $lan")
+        LogSystem.e(TAG, "  - Narrator Mode: $isNarrator")
+        LogSystem.e(TAG, "  - Video URL: $lanVideoFileStream")
+        LogSystem.e(TAG, "  - Lyrics URL: $lanLyrics")
+        LogSystem.e(TAG, "  - Has Subtitle: ${!lanLyrics.isNullOrBlank()}")
+        
+        // Log available media files for debugging
+        LogSystem.e(TAG, "Available Media Files:")
+        LogSystem.e(TAG, "  - audioFileMusic (EN): ${musicItem.audioFileMusic}")
+        LogSystem.e(TAG, "  - audioFileMusicFrench (FR): ${musicItem.audioFileMusicFrench}")
+        LogSystem.e(TAG, "  - videoFileStream (EN): ${musicItem.videoFileStream}")
+        LogSystem.e(TAG, "  - videoFileStreamFrench (FR): ${musicItem.videoFileStreamFrench}")
+        LogSystem.e(TAG, "  - narratorMusicVideoFile (EN): ${musicItem.narratorMusicVideoFile}")
+        LogSystem.e(TAG, "  - narratorMusicVideoFileFrench (FR): ${musicItem.narratorMusicVideoFileFrench}")
 
         // Prepare MediaInfo with the video URL and subtitle track (if available)
         val mediaInfoBuilder =
@@ -1109,6 +1176,9 @@ class PlayerManager private constructor(
         exoPlayerMusic?.seekTo(0)
         exoLocalVideoPlayer?.seekTo(0)
 
+        // Stop video sync before releasing players
+        stopVideoSync()
+
         exoPlayerMusic?.release()
         exoPlayerVoice?.release()
         exoLocalVideoPlayer?.release()
@@ -1159,12 +1229,20 @@ class PlayerManager private constructor(
                 remoteMediaClient?.isPlaying == true || remoteMediaClient?.isPaused == true
             if (isRemoteClientPlaying) {
                 var position = remoteMediaClient?.approximateStreamPosition ?: 0L
-
                 return position
             }
             val musicPos = if (hasMusicSource) (exoPlayerMusic?.currentPosition ?: 0L) else 0L
             val voicePos = if (hasVoiceSource) (exoPlayerVoice?.currentPosition ?: 0L) else 0L
             val videoPos = exoLocalVideoPlayer?.currentPosition ?: 0L
+            
+            // Log A/V sync info when video is playing
+            if (videoPos > 0 && (musicPos > 0 || voicePos > 0)) {
+                val audioDrift = videoPos - maxOf(musicPos, voicePos)
+                if (kotlin.math.abs(audioDrift) > 100) { // Log only if drift > 100ms
+                    LogSystem.e(TAG, "A/V Sync: Drift detected: ${audioDrift}ms (video=$videoPos, music=$musicPos, voice=$voicePos)")
+                }
+            }
+            
             // Use max to avoid "stuck" UI when one of the players is paused/missing.
             return maxOf(musicPos, voicePos, videoPos)
         }
@@ -1172,6 +1250,14 @@ class PlayerManager private constructor(
     }
 
     fun endCurrentSession(stopCasting: Boolean) {
+        // Clear subtitles when cast session ends
+        try {
+            disableSubtitle()
+            LogSystem.e(TAG, "Chromecast: Subtitles cleared as cast session is ending")
+        } catch (e: Exception) {
+            LogSystem.e(TAG, "Chromecast: Error clearing subtitles on session end: ${e.message}")
+        }
+        
         castContext?.sessionManager?.endCurrentSession(stopCasting)
         remoteMediaClient = null
         isCasting = false
@@ -1204,6 +1290,7 @@ class PlayerManager private constructor(
         isPlaying = false
         pauseHueEffect()
         stopPreviewTimer() // Stop preview timer
+        stopVideoSync() // Stop video sync
         releasePlayers()
         releaseResources()
         releaseWakeLock()
@@ -1284,22 +1371,30 @@ class PlayerManager private constructor(
         // Get the currently active track IDs
         val activeTrackIds = remoteMediaClient?.mediaStatus?.activeTrackIds ?: return false
         // Check if the subtitle track ID (1) is in the list of active track IDs
-        return activeTrackIds.contains(1L)
+        val isEnabled = activeTrackIds.contains(1L)
+        LogSystem.e(TAG, "Chromecast: Subtitle enabled check - Result: $isEnabled, Active tracks: ${activeTrackIds.joinToString()}")
+        return isEnabled
     }
 
     fun disableSubtitle() {
+        LogSystem.e(TAG, "Chromecast: Disabling subtitles - clearing active tracks")
         remoteMediaClient?.setActiveMediaTracks(longArrayOf())
     }
 
     fun hasSubtitle(): Boolean {
         val mediaTracks = remoteMediaClient?.mediaInfo?.mediaTracks ?: return false
-        return mediaTracks.any { it.type == MediaTrack.TYPE_TEXT }
+        val hasSubtitle = mediaTracks.any { it.type == MediaTrack.TYPE_TEXT }
+        LogSystem.e(TAG, "Chromecast: Has subtitle check - Result: $hasSubtitle, Total tracks: ${mediaTracks.size}")
+        return hasSubtitle
     }
 
     fun enableSubtitle() {
         if (hasSubtitle()) {
             //Check if there is subtitles
+            LogSystem.e(TAG, "Chromecast: Enabling subtitle track ID 1")
             remoteMediaClient?.setActiveMediaTracks(longArrayOf(1L))
+        } else {
+            LogSystem.e(TAG, "Chromecast: Cannot enable subtitle - no subtitle tracks available")
         }
     }
 
@@ -1383,6 +1478,10 @@ class PlayerManager private constructor(
         exoLocalVideoPlayer?.seekTo(getPlayerPosition())
         exoLocalVideoPlayer?.play()
         acquireWakeLock()
+        
+        // Start video sync when video starts playing
+        startVideoSync()
+        
         if (!isPlaying) {
             play()
         }
@@ -1390,7 +1489,42 @@ class PlayerManager private constructor(
 
     fun pauseLocalVideoPlayer() {
         exoLocalVideoPlayer?.pause()
+        
+        // Stop video sync when video pauses
+        stopVideoSync()
+        
         releaseWakeLock()
+    }
+    
+    /**
+     * Start continuous A/V synchronization for local video playback
+     * Uses VideoSyncController to keep video in sync with audio
+     */
+    private fun startVideoSync() {
+        val videoPlayer = exoLocalVideoPlayer
+        if (videoPlayer != null && videoPlayer.isPlaying) {
+            videoSyncController?.start(
+                videoPlayer = videoPlayer,
+                masterClockProvider = { 
+                    // Audio position is the master clock
+                    val musicPos = if (hasMusicSource) (exoPlayerMusic?.currentPosition ?: 0L) else 0L
+                    val voicePos = if (hasVoiceSource) (exoPlayerVoice?.currentPosition ?: 0L) else 0L
+                    maxOf(musicPos, voicePos)
+                },
+                videoPlayerReady = { isVideoReady }
+            )
+            LogSystem.e(TAG, "A/V Sync: Video synchronization started")
+        }
+    }
+    
+    /**
+     * Stop A/V synchronization
+     */
+    private fun stopVideoSync() {
+        if (videoSyncController?.isActive() == true) {
+            videoSyncController?.stop()
+            LogSystem.e(TAG, "A/V Sync: Video synchronization stopped")
+        }
     }
 
     fun isVideoPlayerReady(): Boolean {

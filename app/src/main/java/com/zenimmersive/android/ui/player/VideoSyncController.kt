@@ -12,15 +12,20 @@ import kotlin.math.abs
  * Audio is the master clock - video follows audio precisely.
  * 
  * Sync Strategy:
- * - Small drift (<30ms): Adjust playback speed slightly (0.98x - 1.02x)
- * - Medium drift (30-150ms): Faster speed adjustment (0.95x - 1.05x)
- * - Large drift (>150ms): Hard seek to correct position
+ * - Very small drift (<50ms): No correction needed - within acceptable range
+ * - Small drift (50-150ms): Adjust playback speed slightly (0.97x - 1.03x)
+ * - Medium drift (150-500ms): Faster speed adjustment (0.93x - 1.07x)
+ * - Large drift (>500ms): Hard seek to correct position immediately
+ * 
+ * Updated to handle typical Chromecast delays and provide tighter synchronization
+ * for lip-sync accuracy requirements.
  */
 class VideoSyncController(
     private val syncIntervalMs: Long = 100,
-    private val smallDriftThresholdMs: Long = 30,
-    private val mediumDriftThresholdMs: Long = 150,
-    private val largeDriftThresholdMs: Long = 300
+    private val verySmallDriftThresholdMs: Long = 50,   // Within acceptable range
+    private val smallDriftThresholdMs: Long = 150,      // Minor correction needed
+    private val mediumDriftThresholdMs: Long = 500,     // Moderate correction needed
+    private val largeDriftThresholdMs: Long = 1000      // Immediate hard seek
 ) {
     private val TAG = "VideoSyncController"
     private val handler = Handler(Looper.getMainLooper())
@@ -115,52 +120,66 @@ class VideoSyncController(
         val videoPosition = player.currentPosition
         val drift = videoPosition - audioPosition
         
-        // Log significant drift for debugging
-        if (abs(drift) > smallDriftThresholdMs) {
-            LogSystem.e(TAG, "Drift detected: ${drift}ms (video=$videoPosition, audio=$audioPosition)")
-        }
+        // Log all drift for comprehensive debugging
+        LogSystem.e(TAG, "Sync check: drift=${drift}ms (video=$videoPosition, audio=$audioPosition)")
         
         when {
-            // CRITICAL DRIFT: Hard seek required (video is way off)
+            // CRITICAL DRIFT: Hard seek required (video is way off - likely initial buffering or major issue)
             abs(drift) > largeDriftThresholdMs -> {
                 consecutiveLargeDrifts++
-                LogSystem.e(TAG, "LARGE DRIFT: ${drift}ms - Performing hard seek (count: $consecutiveLargeDrifts)")
+                LogSystem.e(TAG, "*** CRITICAL DRIFT ***: ${drift}ms - Hard seek needed (count: $consecutiveLargeDrifts)")
                 
-                // Only perform hard seek if drift persists
+                // Perform hard seek immediately for large drift
                 if (consecutiveLargeDrifts >= maxConsecutiveLargeDrifts) {
+                    LogSystem.e(TAG, "Performing HARD SEEK to audio position: $audioPosition")
                     player.seekTo(audioPosition)
                     player.setPlaybackParameters(PlaybackParameters(1.0f))
                     consecutiveLargeDrifts = 0
                 } else {
-                    // Try aggressive speed adjustment first
-                    val speedAdjustment = if (drift > 0) 0.90f else 1.10f
+                    // Try very aggressive speed adjustment first
+                    val speedAdjustment = if (drift > 0) 0.85f else 1.15f
+                    LogSystem.e(TAG, "Attempting aggressive speed correction: $speedAdjustment")
                     player.setPlaybackParameters(PlaybackParameters(speedAdjustment))
                 }
             }
             
-            // MEDIUM DRIFT: Aggressive speed adjustment
+            // MEDIUM DRIFT: Aggressive speed adjustment (typically 150-500ms)
             abs(drift) > mediumDriftThresholdMs -> {
                 consecutiveLargeDrifts = 0
                 val speedAdjustment = when {
-                    drift > 0 -> 0.95f // Video ahead, slow down
-                    else -> 1.05f      // Video behind, speed up
+                    drift > 0 -> 0.93f // Video ahead, slow down significantly
+                    else -> 1.07f      // Video behind, speed up significantly
                 }
                 player.setPlaybackParameters(PlaybackParameters(speedAdjustment))
-                LogSystem.e(TAG, "Medium drift: ${drift}ms - Speed: $speedAdjustment")
+                LogSystem.e(TAG, "Medium drift: ${drift}ms - Speed adjusted to: $speedAdjustment")
             }
             
-            // SMALL DRIFT: Gentle speed adjustment
+            // SMALL DRIFT: Gentle speed adjustment (typically 50-150ms)
             abs(drift) > smallDriftThresholdMs -> {
                 consecutiveLargeDrifts = 0
                 val speedAdjustment = when {
-                    drift > 20 -> 0.98f   // Video ahead, slightly slow down
-                    drift < -20 -> 1.02f  // Video behind, slightly speed up
-                    else -> 1.0f          // Within acceptable range
+                    drift > 100 -> 0.97f   // Video ahead, slightly slow down
+                    drift < -100 -> 1.03f  // Video behind, slightly speed up
+                    drift > 0 -> 0.98f     // Video slightly ahead
+                    else -> 1.02f          // Video slightly behind
+                }
+                player.setPlaybackParameters(PlaybackParameters(speedAdjustment))
+                LogSystem.e(TAG, "Small drift: ${drift}ms - Gentle speed adjustment: $speedAdjustment")
+            }
+            
+            // VERY SMALL DRIFT: Still in acceptable range
+            abs(drift) > verySmallDriftThresholdMs -> {
+                consecutiveLargeDrifts = 0
+                // Very gentle correction for fine-tuning
+                val speedAdjustment = when {
+                    drift > 80 -> 0.99f
+                    drift < -80 -> 1.01f
+                    else -> 1.0f
                 }
                 player.setPlaybackParameters(PlaybackParameters(speedAdjustment))
             }
             
-            // PERFECT SYNC: Normal playback speed
+            // PERFECT SYNC: Normal playback speed (<50ms drift)
             else -> {
                 consecutiveLargeDrifts = 0
                 player.setPlaybackParameters(PlaybackParameters(1.0f))
